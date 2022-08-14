@@ -1,0 +1,82 @@
+
+$color-bg-white: #ffffff;
+$border-color: #DCDFE6;
+
+$font-size-title: 22px;
+$font-size-common: 14px;
+$margin: 16px;
+$padding: 20px;
+$padding-8: 8px;
+
+
+// flex布局
+//类名  .flex-center-center
+$justify: (
+    left: flex-start,
+    center: center,
+    right: flex-end,
+    between: space-between,
+    around: space-around
+);
+$align: (
+    top: flex-start,
+    center: center,
+    bottom: flex-end
+);
+@each $alignKey, $alignVal in $align {
+    @each $justifyKey, $justifyVal in $justify {
+        .flex-#{$justifyKey}-#{$alignKey} {
+            display: flex;
+            justify-content: #{$justifyVal};
+            align-items: #{$alignVal};
+        }
+    }
+};
+
+@mixin text-overflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@mixin flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+@mixin flex-aside {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+@mixin flex-start {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+@mixin flex-end {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+@mixin flex-column-space {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+@mixin flex-column {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+
+@for $i from 1 to 10 {
+    .border-#{$i} {
+        border: #{$i}px solid $border-color;
+    }
+}
+
+
+
