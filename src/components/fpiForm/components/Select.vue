@@ -1,28 +1,34 @@
 <template lang="pug">
 el-select(
-        :clearable="formItem.clearable"
-        :disabled="formItem.disabled"
-        v-model="currModelValue" 
-        :placeholder="formItem.placeholder")
+        :clearable="inputProps.clearable"
+        :disabled="inputProps.disabled"
+        v-model="currModelValue"
+        :size="inputProps.size"
+        :multiple="inputProps.multiple"
+        :collapse-tags="inputProps.collapseTags"
+        :collapse-tags-tooltip="inputProps.collapseTagsTooltip"
+        :filterable="inputProps.filterable"
+        :placeholder="inputProps.placeholder"
+        @change="inputProps.change"
+        )
         el-option(
-            v-for="selItem, ind in option || []" 
-            :label="selItem.label" 
+            v-for="selItem, ind in option || []"
+            :label="selItem.label"
             :value="selItem.value"
-            :disabled="selItem.disabled"  
+            :disabled="selItem.disabled"
             :key="ind")
-       
 </template>
 
 <script lang="ts" setup>
-import type { inputPropsTs, fromTypeTs, optionTs } from '../type'
 import type { PropType } from 'vue'
 import type { EpPropMergeType } from 'element-plus/es/utils'
+import type { fromTypeTs, inputPropsTs, optionTs } from '../type'
 const props = defineProps({
     /**
      * @desc 表单配置项
-     * @abstract 
+     * @abstract
      */
-    formItem: {
+    inputProps: {
         type: Object as PropType<inputPropsTs>,
         default: () => {
             return {}
@@ -32,7 +38,7 @@ const props = defineProps({
      * @desc 对应vModel值
      */
     modelValue: {
-        type: [Number, String] as PropType<EpPropMergeType<readonly [BooleanConstructor, StringConstructor, NumberConstructor], unknown, unknown> | undefined>,
+        type: [Number, String, Boolean] as PropType<EpPropMergeType<readonly [BooleanConstructor, StringConstructor, NumberConstructor], unknown, unknown> | undefined>,
         default: ''
     },
     /**

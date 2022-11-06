@@ -1,7 +1,7 @@
 <template lang="pug">
-fpi-el-table(
+FpiElTableVue(
     :column="column"
-    api="publicMap/singleStation"
+    :api="request.singleStation"
     :isShowPage="false"
     :params="params"
     border
@@ -13,9 +13,9 @@ fpi-el-table(
 
 <script lang="ts" setup name="FpiTable4">
 import type { TableColumnCtx } from 'element-plus/es/components/table/src/table-column/defaults'
-
-import { serviceKey, defaultService } from '@/symbols'
-const $service = inject(serviceKey, defaultService)
+import type { tableColumnTs } from '../types'
+import FpiElTableVue from '../FpiElTable.vue'
+import * as request from '@/service/apis/public'
 interface SpanMethodProps {
     row: Record<string, any>
     column: TableColumnCtx<Record<string, any>>
@@ -23,17 +23,17 @@ interface SpanMethodProps {
     columnIndex: number
 }
 interface dataTs {
-    column: { prop: string; label: string; align: string; fixed?: string; }[]
+    column: { prop: string; label: string; align: string; fixed?: string }[]
     params: {
-        beginTime: number,
-        endTime: number,
-        siteId: number,
-        queryTimeType: string,
+        beginTime: number
+        endTime: number
+        siteId: number
+        queryTimeType: string
         factorGroupId: number
-    },
+    }
     factorList: any[]
 }
-const data: dataTs = reactive({
+const data = reactive({
     column: [
         {
             prop: 'title',
@@ -41,15 +41,21 @@ const data: dataTs = reactive({
             align: 'center',
             fixed: 'left'
         }
-    ],
+    ] as tableColumnTs[],
     params: {
         beginTime: 1655913600000,
         endTime: 1655957321383,
         siteId: 298,
         queryTimeType: 'day',
         factorGroupId: 8
+    } as {
+        beginTime: number
+        endTime: number
+        siteId: number
+        queryTimeType: string
+        factorGroupId: number
     },
-    factorList: []
+    factorList: [] as any[]
 
 })
 
@@ -57,7 +63,7 @@ const data: dataTs = reactive({
 const resPretreatment = async (res: any) => {
     return new Promise<Array<any>>(async (resolve) => {
         if (!data.factorList.length) {
-            const factorRes = await $service('publicMap/queryFactorGroupByCode', { code: 'surfaceSection' })
+            const factorRes = await request.queryFactorGroupByCode({ code: 'surfaceSection' })
             data.factorList = factorRes[0].factors
         }
         const columnAdd = detailHeader()
@@ -68,6 +74,10 @@ const resPretreatment = async (res: any) => {
             const curObj: Record<string, any> = {}
             curObj.title = item.name
             columnAdd.forEach((value) => {
+                if (!currData) {
+                    curObj[value.prop] = '--'
+                    return
+                }
                 curObj[value.prop] = getValueUseful(currData[value.prop])
             })
             returnData.push(curObj)
@@ -75,7 +85,7 @@ const resPretreatment = async (res: any) => {
         const obj: Record<string, any> = {
             title: '总体水质等级'
         }
-        columnAdd.length && (obj[columnAdd[0].prop] = res.stationGrade)
+        columnAdd.length && (obj[columnAdd[0].prop] = res.stationGrade || '--')
         returnData.push(obj)
         resolve(returnData)
     })
@@ -85,9 +95,9 @@ const resPretreatment = async (res: any) => {
 const detailHeader = () => {
     const columnAdd: Array<
         {
-            prop: string,
-            label: string,
-            align: string,
+            prop: string
+            label: string
+            align: string
             fixed?: string
         }
     > = []
@@ -106,7 +116,7 @@ const detailHeader = () => {
 
         columnAdd.push(staticColumn)
     })
-    data.column = [...data.column, ...columnAdd]
+    data.column = [...data.column, ...columnAdd] as tableColumnTs[]
     return columnAdd
 }
 // 对于值进行判断
@@ -116,8 +126,8 @@ const getValueUseful = (value: number | null | 'NaN' | undefined) => {
 }
 // 对于header去除（ 或者 (
 const getName = (value: string) => {
-    if (value.indexOf('(') !== -1) return value.slice(0, value.indexOf('('))
-    if (value.indexOf('（') !== -1) return value.slice(0, value.indexOf('（'))
+    if (value.includes('(')) return value.slice(0, value.indexOf('('))
+    if (value.includes('（')) return value.slice(0, value.indexOf('（'))
     return value
 }
 
@@ -130,18 +140,21 @@ const arraySpanMethod = ({
 }: SpanMethodProps) => {
     if (rowIndex === 6) {
         if (columnIndex === 0) return [1, 1]
-        else if (columnIndex === 1) {
+        else if (columnIndex === 1)
             return [1, data.factorList.length]
-        } else return [0, 0]
+
+        else return [0, 0]
     }
+    return [1, 1]
 }
 const { column, params } = toRefs(data)
 </script>
+
 <style lang="scss" scoped>
 :deep(.el-table th.el-table__cell>.cell) {
     white-space: pre;
-    // white-space: pre-wrap; // 也行。
 
+    // white-space: pre-wrap; // 也行。
 }
 </style>
 

@@ -1,7 +1,7 @@
 <template lang="pug">
-fpi-el-table(
+FpiElTableVue(
     :column="column"
-    api="publicMap/realTimeViewLoad"
+    :api="request.realTimeViewLoad"
     resExpr="rows"
     pageTotalExpr="total"
     :currentPageOffset="-1"
@@ -11,8 +11,9 @@ fpi-el-table(
 </template>
 
 <script lang="ts" setup name="FpiTable4">
-
-
+import type { tableColumnTs } from '../types'
+import FpiElTableVue from '../FpiElTable.vue'
+import * as request from '@/service/apis/public'
 const colorArr = ['#30D385', '#FFD902', '#FF9902', '#FF0200', '#990099', 'black']
 const data = reactive({
     column: [
@@ -72,12 +73,12 @@ const data = reactive({
                 return {
                     width: '70%',
                     margin: '0 auto'
-                } 
+                }
             },
             toolsArr: [
                 {
                     label: '查看',
-                    
+
                     click: (row: Record<string, any>, index: number) => {
                         console.log(row, index, '查看')
                     }
@@ -86,7 +87,6 @@ const data = reactive({
                     label: '编辑',
                     click: (row: Record<string, any>, index: number) => {
                         console.log(row, index, '编辑')
-
                     }
                 },
                 {
@@ -94,16 +94,15 @@ const data = reactive({
                     style: () => {
                         return {
                             color: '#FF0200'
-                        } 
+                        }
                     },
                     click: (row: Record<string, any>, index: number) => {
                         console.log(row, index, '删除')
-
                     }
                 }
             ]
         }
-    ],
+    ] as tableColumnTs[],
     params: {
         stationCodes: 1,
         regionCodes: '330100000000',
@@ -123,5 +122,4 @@ const getBackColor = computed(() => (val: null | number | string) => {
 
 const { column, params } = toRefs(data)
 </script>
-
 

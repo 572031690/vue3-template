@@ -1,29 +1,43 @@
-<template lang="pug">
-fpi-el-table(
-    :column="column"
-    api="publicMap/realTimeViewLoad"
-    resExpr="rows"
-    pageTotalExpr="total"
-    :currentPageOffset="-1"
-    :pageReqExpr="{ pageSizes: 'limit', currentPage: 'offset' }"
-    :params="params"
-    :headerCellStyle="headerCellStyle"
-    max-height="520"
-    )
-    template(v-slot:twoTips="{ scope }")
-        div.two-tips-box 
-            div.two-tip(:style="{ background: getBackColor(scope.row.grade) }") {{ scope.row.grade || '--' }}
-            div.two-tip-text ~
-            div.two-tip(:style="{ background: getBackColor(scope.row.targetGrade) }") {{ scope.row.targetGrade || '--' }}
+<template>
+    <FpiElTableVue
+        :column="column"
+        :api="request.realTimeViewLoad"
+        res-expr="rows"
+        page-total-expr="total"
+        :current-page-offset="-1"
+        :page-req-expr="{
+            pageSizes: 'limit',
+            currentPage: 'offset',
+        }"
+        :params="params"
+        :header-cell-style="headerCellStyle"
+        max-height="520"
+    >
+        <template #twoTips="{ scope }">
+            <div class="two-tips-box">
+                <div class="two-tip" :style="{ background: getBackColor(scope.row.grade) }">
+                    {{ scope.row.grade || '--' }}
+                </div><div class="two-tip-text">
+                    ~
+                </div><div class="two-tip" :style="{ background: getBackColor(scope.row.targetGrade) }">
+                    {{ scope.row.targetGrade || '--' }}
+                </div>
+            </div>
+        </template>
+    </FpiElTableVue>
 </template>
 
 <script lang="ts" setup name="FpiTable4">
 import type { TableColumnCtx } from 'element-plus/es/components/table/src/table-column/defaults'
-import cemeraImg from '@/assets/images/table/camera.png'
 import { h } from 'vue'
+// import str from '@/assets/images/table/camera.png?raw'
+import FpiElTableVue from '../FpiElTable.vue'
+import * as request from '@/service/apis/public'
+import cemeraImg from '@/assets/images/table/camera.png'
+import type { tableColumnTs } from '@/components/fpiElTable/types'
 const headerCellStyle = () => {
     return {
-        padding: 0,
+        'padding': 0,
         'background-color': '#f7faff',
         'text-align': 'center'
     }
@@ -31,7 +45,7 @@ const headerCellStyle = () => {
 // 表格头部标签render函数
 const renderHeader = () => {
     return h('div',
-        { style: { width: 'fit-content', display: 'inline-block', 'vertical-align': 'middle' } },
+        { style: { 'width': 'fit-content', 'display': 'inline-block', 'vertical-align': 'middle' } },
         [
             h('div', {}, ['监测值']),
             h('div', { style: { 'font-weight': 'normal' } }, ['(mg/L)'])
@@ -59,9 +73,9 @@ const data = reactive({
                     'div',
                     {
                         style: {
-                            width: "10px",
+                            width: '10px',
                             height: '10px',
-                            margin: "0 auto",
+                            margin: '0 auto',
                             background: row.grade === 1 ? '#2AC94F' : '#909399',
                             borderRadius: '50%',
                         },
@@ -79,9 +93,9 @@ const data = reactive({
                     {
                         src: cemeraImg,
                         style: {
-                            width: "15px",
+                            width: '15px',
                             height: '15px',
-                            margin: "5px auto 0",
+                            margin: '5px auto 0',
                         },
                     }
                 )
@@ -115,14 +129,14 @@ const data = reactive({
                     'div',
                     {
                         style: {
-                            width: '36px',
-                            height: '22px',
-                            margin: "0 auto",
+                            'width': '36px',
+                            'height': '22px',
+                            'margin': '0 auto',
                             'text-align': 'center',
                             'text-height': '22px',
                             'border-radius': '3px',
-                            color: 'white',
-                            background: row.grade ? colorArr[row.grade - 1] : '#909399'
+                            'color': 'white',
+                            'background': row.grade ? colorArr[row.grade - 1] : '#909399'
                         }
                     },
                     row.grade || '--'
@@ -173,19 +187,17 @@ const data = reactive({
                     label: '编辑',
                     click: (row: Record<string, any>, index: number) => {
                         console.log(row, index, '编辑')
-
                     }
                 },
                 {
                     label: '删除',
                     click: (row: Record<string, any>, index: number) => {
                         console.log(row, index, '删除')
-
                     }
                 }
             ]
         }
-    ],
+    ] as tableColumnTs[],
     params: {
         stationCodes: 1,
         regionCodes: '330100000000',
@@ -197,6 +209,7 @@ const data = reactive({
     },
 
 })
+
 // 获取等级背景颜色
 const getBackColor = computed(() => (val: null | number | string) => {
     if (!val) return '#909399'
@@ -205,6 +218,7 @@ const getBackColor = computed(() => (val: null | number | string) => {
 
 const { column, params } = toRefs(data)
 </script>
+
 <style lang="scss" scoped>
 // :deep(.el-table__inner-wrapper){
 //     border: 1px solid rgb(235, 238, 245);
@@ -217,10 +231,10 @@ const { column, params } = toRefs(data)
     .two-tip {
         width: 36px;
         height: 22px;
-        text-align: center;
-        color: white;
         line-height: 22px;
-        background: #30D385;
+        color: white;
+        text-align: center;
+        background: #30d385;
         border-radius: 3px;
     }
 
@@ -228,7 +242,6 @@ const { column, params } = toRefs(data)
         margin: 0 4px;
         color: #303133;
     }
-
 }
 </style>
 

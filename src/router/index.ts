@@ -5,7 +5,8 @@
  * @LastEditTime: 2021-09-26 11:03:56
  * @Description: 路由注册
  */
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { vueRouters } from './getRouters'
 import Config from '@/config'
 const routes: Array<RouteRecordRaw> = [

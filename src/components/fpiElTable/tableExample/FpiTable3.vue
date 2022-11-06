@@ -1,8 +1,15 @@
+<!--
+ * @Author: mjh
+ * @Date: 2022-08-19 09:31:37
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-11-05 21:16:58
+ * @Description:
+-->
 <template lang="pug">
-fpi-el-table(
+FpiElTableVue(
     :column="column"
     :ref="el => data.fpiElTableDom = el"
-    api="publicMap/realTimeViewLoad"
+    :api="request.realTimeViewLoad"
     resExpr="rows"
     pageTotalExpr="total"
     :currentPageOffset="-1"
@@ -10,20 +17,21 @@ fpi-el-table(
     max-height="550"
     :params="params"
     )
-    template(#expand-solt="{ props }")
+    template(#expand-slot="props")
         div
-            h3 code: {{ props.row.code }}
             h3 dataTimeType: {{ props.row.dataTimeType }}
             h3 name: {{ props.row.name }}
             h3 grade: {{ props.row.grade }}
             h3 dateTime: {{ props.row.dateTime }}
-          
 </template>
 
 <script lang="ts" setup name="FpiTable3">
+import type { tableColumnTs } from '../types'
+import FpiElTableVue from '../FpiElTable.vue'
+import * as request from '@/service/apis/public'
+
 // 只需type为expand即可   原element-plus组件展开行数据唯一 多个展开行的数据最后展示的都一样
 // 所以此组件expand只能有一个不能多个
-
 
 import { globalKey } from '@/symbols'
 const global = inject(globalKey)
@@ -45,7 +53,6 @@ const data = reactive({
             ]
         },
 
-
         {
             prop: 'dataTimeType',
             label: '联单编号',
@@ -66,7 +73,7 @@ const data = reactive({
             label: '日期',
             width: '300',
         }
-    ],
+    ] as tableColumnTs[],
     fpiElTableDom: ref(),
     params: {
         stationCodes: 1,

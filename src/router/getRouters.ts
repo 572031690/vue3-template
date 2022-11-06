@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 function getModules() {
     const components = import.meta.glob('../views/**/*.vue')
     return components
@@ -7,7 +7,7 @@ function getModules() {
 export const vueRouters = function (): Array<RouteRecordRaw> {
     const routerList: Array<RouteRecordRaw> = []
     const modules = getModules()
-    Object.keys(modules).forEach(key => {
+    Object.keys(modules).forEach((key) => {
         const name = key.replace(/(\...views\/|\.vue)/g, '')
         const pathName = name.slice(0, 1).toLowerCase() + name.slice(1)
         routerList.push({

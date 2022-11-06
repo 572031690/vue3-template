@@ -1,51 +1,61 @@
-<template lang="pug">
-fpi-el-table(
-            :column="column"
-            :ref="el => data.fpiElTableDom = el"
-            api="publicMap/realTimeViewLoad"
-            resExpr="rows"
-            pageTotalExpr="total"
-            :currentPageOffset="-1"
-            :pageReqExpr="{ pageSizes: 'limit', currentPage:'offset'}"
-            :params="params"
-            :default-sort="{ prop: 'receivedQuantity', order: 'descending' }"
-            :isLazyRequest="false"
-            highlight-current-row
-            height="550"
-            :cell-style="getCellStyle"
-            :header-cell-style="headStyleFun"
-            empty-text="暂无数据"
-            center
-            @current-change="handleCurrentChange"
-            @selection-change="handleSelectionChange"
-            )
-            template(v-slot:watershedId="{ scope, item }")
-                span {{ scope.row[item.prop] + '撒大' }}
-            template(v-slot:companyName)
-                span {{ '撒大' }}
-            template(v-slot:licenseNumber)
-                span {{ '撒大ss' }}
-                
+<template>
+    <FpiElTableVue
+        :ref="el => data.fpiElTableDom = el"
+        :column="column"
+        :api="request.realTimeViewLoad"
+        res-expr="rows"
+        page-total-expr="total"
+        :current-page-offset="-1"
+        :page-req-expr="{ pageSizes: 'limit', currentPage: 'offset' }"
+        :params="params"
+        :default-sort="{ prop: 'receivedQuantity', order: 'descending' }"
+        :is-lazy-request="false"
+        highlight-current-row
+        height="550"
+        :cell-style="getCellStyle"
+        :header-cell-style="headStyleFun"
+        empty-text="暂无数据"
+        center
+        @current-change="handleCurrentChange"
+        @selection-change="handleSelectionChange"
+    >
+        <template #watershedId="{ scope, item }">
+            <span>{{ `${scope.row[item.prop]}撒大` }} </span>
+        </template>
+        <template #companyName="props">
+            <span>{{ '撒大companyName' }}{{ fff(props) }}</span>
+        </template>
+        <template #licenseNumber>
+            <span>{{ '撒大licenseNumber' }}</span>
+        </template>
+    </FpiElTableVue>
 </template>
 
 <script lang="ts" setup name="FpiTableAll">
-import { globalKey } from '@/symbols'
 import type { TableColumnCtx } from 'element-plus/es/components/table/src/table-column/defaults'
-const global = inject(globalKey)
+import FpiElTableVue from '../FpiElTable.vue'
+import cccc from '../cccc.vue'
+import type { tableColumnTs } from '@/components/fpiElTable/types'
+import * as request from '@/service/apis/public'
 interface columDataTs {
-    companyCode: null,
-    companyName: string,
-    disposalUnitCode: null,
-    disposalUnitName: null,
-    generatingUnitCode: null,
-    generatingUnitName: null,
-    jointNumber: string,
-    jointSerialNumber: string,
-    licenseNumber: string,
-    num: string,
-    receivedQuantity: string,
-    transferDate: string,
-    wasteName: string,
+    companyCode: null
+    companyName: string
+    disposalUnitCode: null
+    disposalUnitName: null
+    generatingUnitCode: null
+    generatingUnitName: null
+    jointNumber: string
+    jointSerialNumber: string
+    licenseNumber: string
+    num: string
+    receivedQuantity: string
+    transferDate: string
+    wasteName: string
+}
+
+const fff = (val: any) => {
+    // console.log(val, 's')
+    return 's'
 }
 const data = reactive({
     column: [
@@ -61,30 +71,38 @@ const data = reactive({
         },
         {
 
-            prop: 'code',
+            prop: 'companyName',
             label: '联单编号',
             width: '250',
             isSlot: true,
-            fixed: 'right'
+            // fixed: 'right'
         },
         {
             label: '产生企业ss',
             column: [
                 {
-                    prop: 'address',
+                    prop: 'accessCode',
                     label: '车牌',
-                    width: '60',
+                    width: '120',
                     showOverflowTooltip: true,
-                    isSlot: true,
+                    // isSlot: true,
+                },
+                {
+                    label: '车牌s',
+                    width: '60',
+                    column: [
+                        {
+                            prop: 'name',
+                            label: '名称',
+                            width: '160',
+                            // showOverflowTooltip: true,
+                            // isSlot: true,
+                        }
+                    ]
                 },
                 {
                     prop: 'name',
                     label: '物品编号',
-                    width: '300',
-                },
-                {
-                    prop: 'grade',
-                    label: '数量',
                     width: '300',
                 },
                 {
@@ -101,12 +119,12 @@ const data = reactive({
                     // },
                     // sortBy: ['receivedQuantity', 'jointSerialNumber'], // 当前面的变量相等时再比较后面的
                     // sortBy: 'receivedQuantity',
-                    sortMethod:(row:columDataTs, row1:columDataTs) => {
+                    sortMethod: (row: columDataTs, row1: columDataTs) => {
                         if (Number(row.num) > Number(row1.num)) return -1
                         else return 1
                         // return row.receivedQuantity
                     },
-                    sortOrders:['ascending', 'descending', null], 
+                    sortOrders: ['ascending', 'descending', null],
                     width: '300',
                 },
                 {
@@ -125,16 +143,17 @@ const data = reactive({
             label: '处置企业',
             isSlot: true,
         }
-    ],
+    ] as tableColumnTs[],
     fpiElTableDom: ref(),
     params: {
-        stationCodes: 1,
+        stationCodes: '12,8,103,104,105,106,107,108,109',
         regionCodes: '330100000000',
         watershedCodes: 'GA',
-        factorGroupCode: 'WMS_SHOWITCODE',
+        factorGroupCode: 'SD',
         online: -1,
         runState: -1,
-        controlLevel: '001',
+        queryStr: '',
+        factorCode: null
     },
     svg: `
         <path class="path" d="
@@ -147,6 +166,27 @@ const data = reactive({
         " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
     `,
 })
+const mgs = ref('message')
+const slots = useSlots()
+const comp = h(
+    cccc,
+    {
+        class: 'sss',
+        onchangeSS: (value: string) => {
+            console.log(value, '-mjhs')
+        },
+        mgs: mgs.value,
+    },
+    {
+        default(props: string) {
+            return `${props}mmsss`
+        }
+    }
+    // [
+    //     slots.default ? slots.default() : 'ss',
+    //     slots.value ? slots.value() : 'ss',
+    // ]
+)
 
 const headStyleFun = () => {
     return {
@@ -178,7 +218,6 @@ onMounted(() => {
         // },2000)
     }, 2000)
 })
-
 
 const handleCurrentChange = (val: any | undefined, old: any) => {
     console.log(val, old, '单选')

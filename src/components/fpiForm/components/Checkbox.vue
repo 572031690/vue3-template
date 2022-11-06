@@ -1,23 +1,40 @@
 <template lang="pug">
 el-checkbox-group(
-        v-model="currModelValue")
-        el-checkbox(
-            v-for="selItem, ind in option || []" 
+    v-model="currModelValue"
+    :placeholder="inputProps.placeholder"
+    :size="inputProps.size"
+    :min="inputProps.min"
+    :disabled="inputProps.disabled"
+    :max="inputProps.max"
+    @change="inputProps.change"
+    )
+    template( v-if="inputProps.type === 'button'")
+        el-checkbox-button(
+            v-for="selItem, ind in option || []"
             :label="selItem.value"
+            :checked="selItem.checked"
             :disabled="selItem.disabled"
             :key="ind") {{ selItem.label}}
-       
+    template(v-else)
+        el-checkbox(
+            v-for="selItem, ind in option || []"
+            :label="selItem.value"
+            :indeterminate="selItem.indeterminate"
+            :checked="selItem.checked"
+            :border="selItem.border"
+            :disabled="selItem.disabled"
+            :key="ind") {{ selItem.label}}
 </template>
 
 <script lang="ts" setup>
-import type { inputPropsTs, fromTypeTs, optionTs } from '../type'
 import type { PropType } from 'vue'
+import type { fromTypeTs, inputPropsTs, optionTs } from '../type'
 const props = defineProps({
     /**
      * @desc 表单配置项
-     * @abstract 
+     * @abstract
      */
-    formItem: {
+    inputProps: {
         type: Object as PropType<inputPropsTs>,
         default: () => {
             return {}

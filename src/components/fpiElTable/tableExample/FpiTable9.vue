@@ -1,12 +1,19 @@
+<!--
+ * @Author: mjh
+ * @Date: 2022-08-19 09:31:37
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-11-05 22:35:41
+ * @Description:
+-->
 <template lang="pug">
 el-button(@click="getTableData()")  获取当前表格数据
-el-button(@click="getTableData(2)")  获取第二条数据
+el-button(@click="getTableData(2)")  获取第3条数据
 el-button(@click="getTableData('all')")  获取全部数据
 el-button(@click="getTableData(typeCurrent)")  获取第1页15条数据数据
 br
-fpi-el-table(
+FpiElTableVue(
     :column="column"
-    api="publicMap/realTimeViewLoad"
+    :api="request.realTimeViewLoad"
     resExpr="rows"
     pageTotalExpr="total"
     :currentPageOffset="-1"
@@ -14,10 +21,12 @@ fpi-el-table(
     :params="params"
     :ref="el => data.fpiElTableDom = el"
     )
-
 </template>
 
 <script lang="ts" setup name="FpiTable4">
+import type { tableColumnTs } from '../types'
+import FpiElTableVue from '../FpiElTable.vue'
+import * as request from '@/service/apis/public'
 // 对于getTableData方法的使用
 
 const typeCurrent = {
@@ -55,7 +64,7 @@ const data = reactive({
             label: 'receivedQuantity数量',
         },
 
-    ],
+    ] as tableColumnTs[],
     fpiElTableDom: ref(),
     params: {
         stationCodes: 1,
@@ -68,11 +77,11 @@ const data = reactive({
     },
 })
 // 手动请求
-const getTableData = async(type?:'all' | number | {
+const getTableData = async (type?: 'all' | number | {
     pageSizes: number
     currentPage: number
 }) => {
-    const getData = await data.fpiElTableDom.getTableData(type) 
+    const getData = await data.fpiElTableDom.getTableData(type)
     console.log('获取到的表格数据：', getData)
 }
 const { column, params } = toRefs(data)

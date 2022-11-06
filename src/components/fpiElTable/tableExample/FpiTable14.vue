@@ -1,5 +1,12 @@
+<!--
+ * @Author: mjh
+ * @Date: 2022-08-19 09:31:37
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-11-05 21:18:50
+ * @Description:
+-->
 <template lang="pug">
-fpi-el-table(
+FpiElTableVue(
     :column="column"
     border
     :ref="el => data.fpiElTableDom = el"
@@ -8,12 +15,14 @@ fpi-el-table(
     :page-params="pageParams"
     @page-change="pageChange"
     )
-
+    template(#empty)
+        div 12
 </template>
 
 <script lang="ts" setup name="FpiTable11">
-import { serviceKey, defaultService } from '@/symbols'
-const $service = inject(serviceKey, defaultService)
+import type { tableColumnTs } from '../types'
+import FpiElTableVue from '../FpiElTable.vue'
+import * as request from '@/service/apis/public'
 // 过滤数据
 const data = reactive({
     column: [
@@ -46,14 +55,14 @@ const data = reactive({
             label: 'receivedQuantity数量',
         },
 
-    ],
+    ] as tableColumnTs[],
     fpiElTableDom: ref(),
     pageParams: {
-        currentPage:1,
+        currentPage: 1,
         total: 0,
         pageSizes: 10,
     },
-    list:[]
+    list: []
 })
 onMounted(() => {
     getData()
@@ -72,16 +81,17 @@ const getData = () => {
         limit: data.pageParams.pageSizes,
         offset: data.pageParams.currentPage - 1
     }
-    $service('publicMap/realTimeViewLoad', params, {}, 'intercept').then((res: any) => {
+    request.realTimeViewLoad(params, {
+        isIntercept: true
+    }).then((res: any) => {
         data.pageParams.total = Number(res.total) ?? 0
         data.list = res.rows || []
         data.fpiElTableDom.changeLoading(false)
     })
-
 }
 // 必须按照这三个变量名写
 const pageChange = (pageObj: {
-    currentPage:number
+    currentPage: number
     total: number
     pageSizes: number
 }) => {

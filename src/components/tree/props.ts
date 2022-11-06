@@ -1,6 +1,6 @@
-import type { TreeNodeData, TreeOptionProps, TreeKey, hType, Icon, RenderContentFunction, AllowDragFunction, AllowDropFunction, LoadFunction, FilterNodeMethodFunction } from './types'
 import type { PropType } from 'vue'
 import type Node from 'element-plus/es/components/tree/src/model/node'
+import type { AllowDragFunction, AllowDropFunction, FilterNodeMethodFunction, Icon, LoadFunction, RenderContentFunction, TreeKey, TreeNodeData, TreeOptionProps, hType } from './types'
 export const treeProps = {
     /**
      * @desc 是否显示搜索框
@@ -61,7 +61,7 @@ export const treeProps = {
      */
     renderContent: {
         type: Function as PropType<RenderContentFunction>,
-        default: (h: hType, { node, data } : {
+        default: (h: hType, { node, data }: {
             node: Node
             data: TreeNodeData
         }) => {

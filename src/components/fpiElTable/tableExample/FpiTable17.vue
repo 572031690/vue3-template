@@ -1,5 +1,5 @@
 <template lang="pug">
-fpi-el-table(
+FpiElTableVue(
     :column="column"
     style="width: 100%; margin-bottom: 20px"
     :tableData="tableData"
@@ -10,7 +10,7 @@ fpi-el-table(
     border
     max-height="250"
     )
-fpi-el-table(
+FpiElTableVue(
     :column="column"
     style="width: 100%;"
     :tableData="tableData1"
@@ -26,8 +26,10 @@ fpi-el-table(
 </template>
 
 <script lang="ts" setup name="FpiTable4">
+import FpiElTableVue from '../FpiElTable.vue'
+import type { tableColumnTs } from '../types'
 // 使用方式同element-plus官网
- //    default-expand-all
+//    default-expand-all
 
 interface User {
     id: number
@@ -37,13 +39,12 @@ interface User {
     children?: User[]
 }
 
-
 const data = reactive({
     column: [
         {
             type: 'index',
             label: '序号',
-            width: '50',
+            width: '80',
         },
         {
             prop: 'date',
@@ -53,7 +54,7 @@ const data = reactive({
             prop: 'name',
             label: 'Name',
         }
-    ],
+    ] as tableColumnTs[],
     pageParams: {
         currentPage: 1,
         total: 0,
@@ -124,7 +125,7 @@ onMounted(() => {
     data.fpiElTableDom.toggleRowExpansion(data.tableData[2], true)
 })
 const load = (
-    row: User,
+    row: any,
     treeNode: unknown,
     resolve: (date: User[]) => void
 ) => {

@@ -1,9 +1,9 @@
 <!--
  * @Author: Tian
  * @Date: 2022-06-22 11:25:10
- * @LastEditors: Tian
- * @LastEditTime: 2022-07-06 10:36:36
- * @Description: 
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-10-22 00:20:51
+ * @Description:
 -->
 <template lang="pug">
 .layout-button
@@ -14,10 +14,10 @@
             el-button(color='rgba(0, 0, 0, 0.15)') 业务标签
     //-级联选择器
     fpi-cascader(
-        :options='cascaderObj.options' 
-        :currentType='cascaderObj.currentType' 
-        :typeList='cascaderObj.typeList' 
-        :textHolder='cascaderObj.textHolder' 
+        :options='cascaderObj.options'
+        :currentType='cascaderObj.currentType'
+        :typeList='cascaderObj.typeList'
+        :textHolder='cascaderObj.textHolder'
         :currentNode.sync='cascaderObj.currentNode'
         @handleChangeNode='handleChangeNode'
         @handleTypeChange='handleTypeChange'
@@ -30,20 +30,19 @@
         el-button(type="danger") 删除所选
         el-button(@click="goToTable('table')") FpiTable
         el-button(@click="goToTable('form')") FpiForm
-    
 </template>
+
 <script lang="ts" setup name="button-list">
-import { getTargetNodeList } from '@/utils/tools'
-import type { TypeList } from './types'
 import { useRouter } from 'vue-router'
-import { serviceKey, defaultService } from '@/symbols'
-const service = inject(serviceKey, defaultService) 
+import type { TypeList } from './types'
+import { getTargetNodeList } from '@/utils/tools'
+import * as request from '@/service/apis/public'
 const router = useRouter()
 
 // 跳转table页
-const goToTable = (name:string) => {
+const goToTable = (name: string) => {
     router.push({
-        path: '/' + name
+        path: `/${name}`
     })
 }
 const areaCascaderRef = ref()
@@ -54,9 +53,9 @@ const cascaderObj = reactive({
     ],
     currentType: '',
     currentNode: '',
-    options: [],
+    options: [] as any,
     textHolder: '',
-    copyList: []
+    copyList: [] as any
 })
 cascaderObj.currentType = '区域'
 const handleChangeNode = (curNode: TypeList) => {
@@ -69,41 +68,45 @@ const handleTypeChange = (type: string) => {
     const code = type === '区域' ? 'area' : 'valley'
     getAreaData(code)
 }
-//搜索
+// 搜索
 const handleSearchEvent = (val: string) => {
     const res = getTargetNodeList(cascaderObj.copyList, val)
     cascaderObj.options = res
 }
 
-//获取区域树、流域树
+// 获取区域树、流域树
 const getAreaData = async (code: string) => {
-    const params = code === 'area' ? {
-       code: '330100000000' 
-    } : {
-        codes: 'GA'
-    }
-    const data = await service(`publicMap/getCascader${code}Data`, params)
+    const params = code === 'area'
+        ? {
+            code: '330100000000'
+        }
+        : {
+            codes: 'GA'
+        }
+    const data = await request[`getCascader${code}Data` as ('getCascaderareaData' | 'getCascadervalleyData')](params as any)
     cascaderObj.options = data
     cascaderObj.copyList = data
-    cascaderObj.textHolder = `${cascaderObj.currentType}：${data[0].label}`
-    cascaderObj.currentNode = data[0].code
+    cascaderObj.textHolder = `${cascaderObj.currentType}：${(data as any)[0].label}`
+    cascaderObj.currentNode = (data as any)[0].code
 }
 getAreaData(cascaderObj.typeList[0].key)
-
 </script>
+
 <style lang="scss" scoped>
-.layout-button{
+.layout-button {
     height: 88px;
     padding: 0 40px;
+
     @include flex-aside;
+
     .layout-title {
         @include flex-start;
+
         .text {
-            color: var(--el-color-white);
-            font-size: $font-size-title;
             margin-right: $margin;
+            font-size: $font-size-title;
+            color: var(--el-color-white);
         }
     }
 }
-
 </style>

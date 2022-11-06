@@ -1,9 +1,9 @@
 <!--
  * @Author: Tian
  * @Date: 2022-07-06 10:33:56
- * @LastEditors: Tian
- * @LastEditTime: 2022-07-06 11:29:29
- * @Description: 
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-09-08 10:13:45
+ * @Description:
 -->
 <template lang="pug">
 .cascader
@@ -37,14 +37,15 @@
                     ref='fpiCascaderRef'
                     )
 </template>
+
 <script lang="ts" setup name="fpi-cascader">
 import { Search } from '@element-plus/icons-vue'
 import { cascaderProps } from './props'
 import type { CascaderObj } from './types'
-const $emit = defineEmits(['handleTypeChange', 'handleChangeNode', 'handleSearchEvent', 'handleInputEvent'])
 defineProps({
     ...cascaderProps
 })
+const $emit = defineEmits(['handle-change-node', 'handle-type-change', 'handle-search-event', 'handle-input-event'])
 const cascaderObj: CascaderObj = reactive({
     isOpen: false,
     searchName: '',
@@ -55,49 +56,56 @@ const fpiCascaderRef = ref()
 const changeNode = () => {
     const curNodeInfo = fpiCascaderRef.value.getCheckedNodes()[0]
     // change事件
-    $emit('handleChangeNode', {...curNodeInfo})
+    $emit('handle-change-node', { ...curNodeInfo })
     // 弹框消失
     cascaderObj.showPanel = !cascaderObj.showPanel
 }
 const typeChange = (type: any) => {
     cascaderObj.searchName = ''
-    $emit('handleTypeChange', type)
+    $emit('handle-type-change', type)
 }
 const changeIcon = () => {
     cascaderObj.isOpen = !cascaderObj.isOpen
     cascaderObj.showPanel = !cascaderObj.showPanel
 }
 const searchEvent = (val: string) => {
-    $emit('handleSearchEvent', val)
+    $emit('handle-search-event', val)
 }
 const inputEvent = (val: string) => {
-    $emit('handleSearchEvent', val)
+    $emit('handle-search-event', val)
 }
 </script>
+
 <style lang="scss">
 .cascader {
-    color: var(--el-color-white);
-    font-size: $font-size-common;
     position: absolute;
     top: 70px;
     left: 350px;
     z-index: 99;
+    font-size: $font-size-common;
+    color: var(--el-color-white);
+
     .cascader-title {
         @include flex-start;
+
         cursor: pointer;
+
         .text {
             margin-right: $padding-8;
         }
     }
+
     .cascader-popup {
         min-width: 448px;
-        margin-top: 10px;
         padding: $padding-8;
-        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.08);
+        margin-top: 10px;
         background: $color-bg-white;
+        box-shadow: 0 4px 8px 0 rgb(0 0 0 / 8%);
+
         .cascader-panel {
             margin-top: $padding-8;
         }
+
         .cascader-popup-search {
             width: 200px;
         }

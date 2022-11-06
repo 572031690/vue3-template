@@ -3,11 +3,11 @@ home-page
     template(v-slot:top)
         .left-text  危废联单
         .left-text-btn(@click="goToTable()")  跳转table
-        .right-tip 
+        .right-tip
             el-button(@click="clickDown()") 导出
     template(v-slot:body)
-        .home 
-            .top-search-line 
+        .home
+            .top-search-line
                 el-input(@change="setSearchForm" placeholder="联单编码" v-model="searchForm.searchName" style="width: 240px;height: 28px;;margin-right: 8px;" :prefix-icon="Search" clearable)
                 el-input(@change="setSearchForm" placeholder="产生企业" v-model="searchForm.searchName" style="width: 240px;height: 28px;;margin-right: 8px;" :prefix-icon="Search" clearable)
                 el-input(@change="setSearchForm" placeholder="处置企业" v-model="searchForm.searchName" style="width: 240px;height: 28px;margin-right: 8px;" :prefix-icon="Search" clearable)
@@ -39,28 +39,28 @@ home-page
                         template(#default="scope")
                             .edit-text(@click="getRowData(scope.row)") 详情
             .list-page(v-if='pageTotal')
-                div 
-                    el-pagination(layout="prev, pager, next,sizes" 
-                    popper-class="transforPage"  
-                    pager-count="6" 
-                    v-model:page-size="limit" 
+                div
+                    el-pagination(layout="prev, pager, next,sizes"
+                    popper-class="transforPage"
+                    pager-count="6"
+                    v-model:page-size="limit"
                     :page-sizes="[10, 20, 30, 50]"
-                    :total="pageTotal" 
-                    :current-page='currentSelectedPage' 
-                    @current-change='currentChange' 
+                    :total="pageTotal"
+                    :current-page='currentSelectedPage'
+                    @current-change='currentChange'
                     @size-change="currentSizeChange")
             DialogAddEdit(v-model:dialogVisible="dialogVisible" v-model:jointNumber="jointNumber" :detailData="detailData")
 </template>
 
 <script lang="ts" setup name="home">
-import { globalKey, serviceKey, defaultService } from '@/symbols'
-import HomePage from '@/layouts/HomePage.vue'
-import { debounce } from '@/utils/tools'
 import { useRouter } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
-const global = inject(globalKey)
-const $service = inject(serviceKey, defaultService)
+import { globalKey } from '@/symbols'
+import HomePage from '@/layouts/HomePage.vue'
+import { debounce } from '@/utils/tools'
+import * as request from '@/service/apis/public'
 const emits = defineEmits(['update:isDown'])
+const global = inject(globalKey)
 const router = useRouter()
 const data = reactive({
     searchForm: {
@@ -143,7 +143,7 @@ const getData = () => {
         beginTime: global?.dayjs().startOf('year').format('YYYY-MM-DD HH:mm:ss'),
         endTime: global?.dayjs().endOf('year').format('YYYY-MM-DD HH:mm:ss')
     }
-    $service('publicMap/jointList', params, {}, 'intercept').then((res: any) => {
+    request.jointList(params, { isIntercept: true }).then((res: any) => {
         const resData = res.data?.entries ?? []
         data.pageTotal = res.data.total ?? 0
         data.list = resData
@@ -151,7 +151,7 @@ const getData = () => {
         data.loading = false
     })
     // 测试请求
-    $service('publicMap/getJsonTest').then((res: any) => {
+    request.getJsonTest().then((res: any) => {
         // console.log(res,'res')
     })
 }
@@ -159,27 +159,27 @@ const getData = () => {
 const initData = () => {
     data.list.forEach((item: Record<string, null | string>) => {
         for (const j in item) {
-            if (item[j] === 'null' || !item[j]) item[j] = '--'
+            if (item[j] === 'null' || !item[j])
+                item[j] = '--'
         }
     })
-
 }
 // 下载方法
 const handleDownload = () => {
     import('@/utils/vendor/Export2Excel.js' as any).then((excel: any) => {
-        //excle表头
+        // excle表头
         const tHeader = ['联单编号', '产生企业', '处置企业', '运输单位', '车牌号', '废物名称', '转移数量(吨)', '接收数量', '转移时间']
-        //返回数据的key
+        // 返回数据的key
         const filterVal = ['jointNumber', 'companyName', 'disposalUnitName', 'transportUnitName', 'licenseNumber', 'wasteName', 'num', 'receivedQuantity', 'transferDate']
-        //后台查询到的list
+        // 后台查询到的list
         const list = data.list
         const datas = formatJson(filterVal, list)
         excel.export_json_to_excel({
-            header: tHeader,//表头
-            data: datas, //数据
-            filename: '危废联单',//导出文件名
-            autoWidth: true,//导出宽度自动
-            bookType: 'xlsx'//导出后缀
+            header: tHeader, // 表头
+            data: datas, // 数据
+            filename: '危废联单', // 导出文件名
+            autoWidth: true, // 导出宽度自动
+            bookType: 'xlsx'// 导出后缀
         })
         emits('update:isDown', false)
     })
@@ -198,74 +198,71 @@ const formatJson = (filterVal: any, jsonData: any) => {
 getData()
 const { jointNumber, detailData, pickerOptions, limit, pageTotal, currentSelectedPage, list, searchForm, dialogVisible, loading, svg } = toRefs(data)
 </script>
+
 <style lang="scss" scoped>
-.left-text{
+.left-text {
     font-family: PingFangSC;
     font-size: 20px;
-    font-weight: Medium;
-    letter-spacing: 0px;
-    color: #FFFFFF;
+    font-weight: medium;
+    color: #fff;
+    letter-spacing: 0;
 }
-    
-.left-text-btn{
-    font-family: PingFangSC;
-    font-size: 20px;
+
+.left-text-btn {
     padding: 5px 8px;
-    font-weight: Medium;
-    letter-spacing: 0px;
-    color: #FFFFFF;
+    font-family: PingFangSC;
+    font-size: 20px;
+    font-weight: medium;
+    color: #fff;
+    letter-spacing: 0;
     cursor: pointer;
-    border: 1px solid rgba(255,255,255,.6);
-    border-radius: 5px ;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 5px;
 }
-    
-.home{
-     padding: 16px 16px 0 16px;
-     input {
-         margin-right: 8px ;
-     }
-       
-    .table-body{
+
+.home {
+    padding: 16px 16px 0;
+
+    input {
+        margin-right: 8px;
+    }
+
+    .table-body {
         margin-top: 12px;
-        .edit-text{
+
+        .edit-text {
             font-family: PingFangSC;
             font-size: 12px;
+            color: #0062ff;
+            letter-spacing: 0;
             cursor: pointer;
-            letter-spacing: 0px;
-            color: #0062FF;
         }
-            
-        .header-cell-table{
+
+        .header-cell-table {
             text-align: center;
-            background: #F7FAFF;
+            background: #f7faff;
         }
-           
-        thead{
-             :deep(.el-table__cell){
+
+        thead {
+            :deep(.el-table__cell) {
                 background-color: red;
-             }
-                
+            }
         }
-           
     }
-        
-        
 }
-   
-    
-:deep(.el-input__inner){
+
+:deep(.el-input__inner) {
     font-size: 12px;
 }
-    
-:deep(.el-range-input){
+
+:deep(.el-range-input) {
     font-size: 12px;
 }
-    
-.list-page{
+
+.list-page {
     display: flex;
-    width: 100%;
     flex-direction: row-reverse;
+    width: 100%;
     margin-top: 10px;
 }
-    
 </style>

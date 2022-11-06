@@ -1,8 +1,14 @@
+<!--
+ * @Author: mjh
+ * @Date: 2022-08-19 09:31:37
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-10-22 08:05:05
+ * @Description:
+-->
 <template lang="pug">
-
-fpi-el-table(
+FpiElTableVue(
     :column="column"
-    api="publicMap/realTimeViewLoad"
+    :api="request.realTimeViewLoad"
     resExpr="rows"
     pageTotalExpr="total"
     :currentPageOffset="-1"
@@ -11,10 +17,12 @@ fpi-el-table(
     border
     max-height="400"
     )
-
 </template>
 
 <script lang="ts" setup name="FpiTable11">
+import FpiElTableVue from '../FpiElTable.vue'
+import type { tableColumnTs } from '../types'
+import * as request from '@/service/apis/public'
 // 固定列 只需要在column传参对于的对象内传入fixed 属性
 // fixed : true false left right
 // 传入 max-height 或 height 固定表头
@@ -64,7 +72,7 @@ const data = reactive({
             width: '250',
             label: 'receivedQuantity数量',
         },
-    ],
+    ] as tableColumnTs[],
     params: {
         stationCodes: 1,
         regionCodes: '330100000000',

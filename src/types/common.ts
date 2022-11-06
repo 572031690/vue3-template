@@ -1,27 +1,10 @@
-export type globalTs = {
+/*
+ * @Author: mjh
+ * @Date: 2022-08-19 09:31:37
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-08-27 00:33:20
+ * @Description:
+ */
+export interface globalTs {
     dayjs: any
-}
-export type serviceTs = (
-    url: string,
-    params?: Record<string, any>,
-    header?: Record<string, any>,
-    type?: string
-) => any
-export interface tableColumnTs {
-    prop: string,
-    label?: string,
-    width?: string,
-    isSlot?: boolean,
-    column?: Array<{
-        prop: string,
-        label?: string
-        width?: string
-        isSlot?: boolean
-        column?: Array<{
-            prop: string,
-            label?: string
-            width?: string
-            isSlot?: boolean
-        }>
-    }>
 }

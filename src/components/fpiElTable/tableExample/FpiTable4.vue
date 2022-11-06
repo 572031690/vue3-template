@@ -1,8 +1,8 @@
 <template lang="pug">
-fpi-el-table(
+FpiElTableVue(
     :column="column"
     :ref="el => data.fpiElTableDom = el"
-    api="publicMap/realTimeViewLoad"
+    :api="request.realTimeViewLoad"
     resExpr="rows"
     pageTotalExpr="total"
     :currentPageOffset="-1"
@@ -12,25 +12,27 @@ fpi-el-table(
     :summary-method="getSummaries"
     show-summary
     )
-          
 </template>
 
 <script lang="ts" setup name="FpiTable4">
+import type { TableColumnCtx } from 'element-plus/es/components/table/src/table-column/defaults'
+import FpiElTableVue from '../FpiElTable.vue'
+import type { tableColumnTs } from '../types'
+import * as request from '@/service/apis/public'
 // 若表格展示的是各类数字，可以在表尾显示各列的合计。
 // 将 show-summary 设置为true就会在表格尾部展示合计行。
 // 默认情况下，对于合计行，第一列不进行数据求合操作，而是显示「合计」二字（可通过sum - text配置），
 // 其余列会将本列所有数值进行求合操作，并显示出来。 当然，你也可以定义自己的合计逻辑。
-// 使用 summary - method 并传入一个方法，返回一个数组，这个数组中的各项就会显示在合计行的各列中， 
+// 使用 summary - method 并传入一个方法，返回一个数组，这个数组中的各项就会显示在合计行的各列中，
 // summary-method 优先级高于 sum-text
 
-import type { TableColumnCtx } from 'element-plus/es/components/table/src/table-column/defaults'
 interface columDataTs {
     [key: string]: any
-    code: string,
-    dataTimeType: string,
-    name: string,
-    grade: number,
-    dateTime: string,
+    code: string
+    dataTimeType: string
+    name: string
+    grade: number
+    dateTime: string
 }
 interface SummaryMethodProps<T = columDataTs> {
     columns: TableColumnCtx<T>[]
@@ -63,7 +65,7 @@ const data = reactive({
             label: '日期',
             width: '300',
         }
-    ],
+    ] as tableColumnTs[],
     fpiElTableDom: ref(),
     params: {
         stationCodes: 1,
@@ -83,17 +85,18 @@ const getSummaries = (param: SummaryMethodProps) => {
             sums[index] = 'Total Cost'
             return
         }
-        const values = data.map((item) => Number(item[column.property]))
-        if (!values.every((value) => Number.isNaN(value))) {
+        const values = data.map(item => Number(item[column.property]))
+        if (!values.every(value => Number.isNaN(value))) {
             sums[index] = `$ ${values.reduce((prev, curr) => {
                 const value = Number(curr)
-                if (!Number.isNaN(value)) {
+                if (!Number.isNaN(value))
                     return prev + curr
-                } else {
+
+                else
                     return prev
-                }
             }, 0)}`
-        } else {
+        }
+        else {
             sums[index] = 'N/A'
         }
     })

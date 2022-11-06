@@ -1,35 +1,37 @@
 <template lang="pug">
-fpi-el-table(
+FpiElTableVue(
     :column="column"
     :ref="el => data.fpiElTableDom = el"
-    api="publicMap/realTimeViewLoad"
+    :api="request.realTimeViewLoad"
     resExpr="rows"
     pageTotalExpr="total"
     :currentPageOffset="-1"
     :pageReqExpr="{ pageSizes: 'limit', currentPage:'offset'}"
     :params="params"
     )
-                
 </template>
 
 <script lang="ts" setup name="FpiTableAll">
 import type { TableColumnCtx } from 'element-plus/es/components/table/src/table-column/defaults'
+import FpiElTableVue from '../FpiElTable.vue'
 import type { tableColumnTs } from '@/components/fpiElTable/types'
+import * as request from '@/service/apis/public'
+
 interface columDataTs {
     [key: string]: any
-    companyCode: null,
-    companyName: string,
-    disposalUnitCode: null,
-    disposalUnitName: null,
-    generatingUnitCode: null,
-    generatingUnitName: null,
-    jointNumber: string,
-    jointSerialNumber: string,
-    licenseNumber: string,
-    num: string,
-    receivedQuantity: string,
-    transferDate: string,
-    wasteName: string,
+    companyCode: null
+    companyName: string
+    disposalUnitCode: null
+    disposalUnitName: null
+    generatingUnitCode: null
+    generatingUnitName: null
+    jointNumber: string
+    jointSerialNumber: string
+    licenseNumber: string
+    num: string
+    receivedQuantity: string
+    transferDate: string
+    wasteName: string
 }
 const data = reactive({
     column: [
@@ -42,10 +44,10 @@ const data = reactive({
             prop: 'code',
             label: '车牌',
             filters: [
-                { text: 'GKA', value: 'GKA' },
-                { text: 'DM', value: 'DM' },
-                { text: 'SK', value: 'SK' },
-                { text: 'QD', value: 'QD' }
+                { text: '3112', value: '3112' },
+                { text: '3116', value: '3116' },
+                { text: '1009', value: '1009' },
+                { text: '3110', value: '3110' }
             ],
             filterMethod: (
                 value: string,
@@ -53,7 +55,7 @@ const data = reactive({
                 column: TableColumnCtx<columDataTs>
             ) => {
                 const property = column.property // 代表当前prop的字符串
-                return row[property].indexOf(value) !== -1
+                return row[property].includes(value)
             },
         },
         {
@@ -87,9 +89,9 @@ const data = reactive({
                 column: TableColumnCtx<columDataTs>
             ) => {
                 const property = column.property // 代表当前prop的字符串
-                return row[property].indexOf(value) !== -1
+                return row[property].includes(value)
             },
-            filterPlacement:'bottom-end', //过滤弹出框的定位 与 Tooltip 的 placement 属性相同
+            filterPlacement: 'bottom-end', // 过滤弹出框的定位 与 Tooltip 的 placement 属性相同
             width: '300',
         },
     ] as tableColumnTs[],
@@ -111,7 +113,6 @@ onMounted(() => {
 
     }, 2000)
 })
-
 
 const { column, params } = toRefs(data)
 </script>

@@ -1,14 +1,18 @@
 /*
  * @Author: Tian
  * @Date: 2021-11-01 10:48:16
- * @LastEditors: Tian
- * @LastEditTime: 2021-11-02 18:20:56
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-10-23 09:36:20
  * @Description:
  */
 import Cookies from 'js-cookie'
-const TokenKey = 'token'
-import config from '@/config/index'
 import { ElMessage } from 'element-plus'
+
+// vue全局挂载导出方法  使用 const { proxy } = useCurrentInstance()
+import type { ComponentInternalInstance } from 'vue'
+import { getCurrentInstance } from 'vue'
+import config from '@/config/index'
+const TokenKey = 'token'
 /**
  * @desc 函数 防抖 false/节流 true
  * @param fn 函数
@@ -18,23 +22,23 @@ import { ElMessage } from 'element-plus'
 export function debounce(fn: () => void, immediate: boolean, wait = 1000) {
     let timer: null | NodeJS.Timeout
     return function () {
-        if (timer && immediate) {
+        if (timer && immediate)
             return
-        }
-        if (timer && !immediate) {
+
+        if (timer && !immediate)
             clearTimeout(timer)
-        }
-        if (immediate) {
+
+        if (immediate)
             fn()
-        }
+
         timer = setTimeout(() => {
             timer = null
-            if (!immediate) {
+            if (!immediate)
                 fn()
-            }
         }, wait)
     }
 }
+
 /**
  * @desc 函数
  * @param msg 显示文字
@@ -69,13 +73,14 @@ export function toLowerLine(str: string, type?: string) {
     type = type || '-'
     let tuo = ''
     const arr = str.split('')
-    const newArr = arr.map(ite => {
+    const newArr = arr.map((ite) => {
         return ite.toUpperCase() === ite
             ? (ite = type + ite.toLowerCase())
             : ite
     })
     tuo = newArr.join('')
-    if (tuo.slice(0, 1) === type) return tuo.slice(1)
+    if (tuo.slice(0, 1) === type)
+        return tuo.slice(1)
     return tuo
 }
 
@@ -92,10 +97,10 @@ export function setToken(token: string) {
  * @return {String}
  */
 export function getToken() {
-    const token =
-        window.localStorage.getItem('token') ||
-        Cookies.get(TokenKey) ||
-        getQueryValue(TokenKey)
+    const token
+        = window.localStorage.getItem('token')
+        || Cookies.get(TokenKey)
+        || getQueryValue(TokenKey)
     return token
 }
 
@@ -116,7 +121,7 @@ export function removeToken() {
 export function getQueryValue(key: string) {
     const url = window.location.search
     const theRequest: any = {}
-    if (url.indexOf('?') !== -1) {
+    if (url.includes('?')) {
         const str = url.substr(1)
         const queryList = str.split('&')
         for (let i = 0; i < queryList.length; i++) {
@@ -134,7 +139,8 @@ export function getQueryValue(key: string) {
  */
 export function checkToken() {
     const value = getQueryValue(TokenKey)
-    if (value) setToken(value)
+    if (value)
+        setToken(value)
     return !!value || !!getToken()
 }
 /**
@@ -162,15 +168,12 @@ export function decodeQuery(queryStr: string) {
     const query: Record<string, any> = {}
     queryStr = decodeURI(queryStr.replace('?', ''))
     const queryArr = queryStr.split('&')
-    queryArr.forEach(item => {
+    queryArr.forEach((item) => {
         const keyAndValue = item.split('=')
         query[keyAndValue[0]] = keyAndValue[1]
     })
     return query
 }
-
-// vue全局挂载导出方法  使用 const { proxy } = useCurrentInstance()
-import { ComponentInternalInstance, getCurrentInstance } from 'vue'
 export function useCurrentInstance() {
     const { appContext } = getCurrentInstance() as ComponentInternalInstance
     const proxy = appContext.config.globalProperties
@@ -185,13 +188,14 @@ export function useCurrentInstance() {
  * 可确定的类型：undefined、null、string、number、boolean、array、object、symbol、
  * date、regexp、function、asyncfunction、arguments、set、map、weakset、weakmap
  */
-type typeReturn<T> = T extends string ? boolean : string
-export function DataType<T>(tgt: any, type?: T):typeReturn<T> {
+export function DataType(tgt: any): string
+export function DataType(tgt: any, type: string): boolean
+export function DataType(tgt: any, type?: string) {
     const dataType = Object.prototype.toString
         .call(tgt)
         .replace(/\[object (\w+)\]/, '$1')
         .toLowerCase()
-    return (type ? dataType === (type as unknown as string) : dataType) as typeReturn<T>
+    return (type ? dataType === type : dataType)
 }
 
 /**
@@ -215,25 +219,25 @@ export function compare(
         } = {
             add: [],
             del: []
-        },
-        cenObj: {
+        }
+    const cenObj: {
             [key: number | string]: any
         } = {}
-    //把beforeArr数组去重放入cenObj
-    for (let i = 0; i < beforeArr.length; i++) {
+    // 把beforeArr数组去重放入cenObj
+    for (let i = 0; i < beforeArr.length; i++)
         cenObj[beforeArr[i]] = beforeArr[i]
-    }
-    //遍历afterArr，查看其元素是否在cenObj中
+
+    // 遍历afterArr，查看其元素是否在cenObj中
     for (let j = 0; j < afterArr.length; j++) {
-        if (!cenObj[afterArr[j]]) {
+        if (!cenObj[afterArr[j]])
             resObj.add.push(afterArr[j])
-        } else {
+
+        else
             delete cenObj[afterArr[j]]
-        }
     }
-    for (const k in cenObj) {
+    for (const k in cenObj)
         resObj.del.push(k)
-    }
+
     return resObj
 }
 
@@ -249,7 +253,8 @@ export const getTreeDataSub = (list: Array<Record<string, any>>) => {
     const getTargetUrl = (arr: Record<string, any>) => {
         if (arr.subs && arr.subs.length) {
             getTargetUrl(arr.subs[0])
-        } else {
+        }
+        else {
             resultUrl.url = arr.url
             resultUrl.code = arr.code
         }
@@ -268,10 +273,11 @@ export const getTreeNode = (list: Array<Record<string, any>>, code: string | num
     }
     const getTargetNode = (arr: Array<Record<string, any>>, code: string | number) => {
         arr.forEach((item: any) => {
-            if(item.code === code) {
+            if (item.code === code) {
                 result.label = item.label
                 result.code = item.code
-            } else if (item.children && item.children.length) {
+            }
+            else if (item.children && item.children.length) {
                 getTargetNode(item.children, code)
             }
         })
@@ -283,15 +289,15 @@ export const getTreeNode = (list: Array<Record<string, any>>, code: string | num
  * 获取匹配的树节点
  * list 树结构
  */
- export const getTargetNodeList = (list: Array<Record<string, any>>, name: string | number) => {
+export const getTargetNodeList = (list: Array<Record<string, any>>, name: string | number) => {
     const result: any = []
     const getTargetList = (arr: Array<Record<string, any>>, name: string | number) => {
         arr.forEach((item: any) => {
-            if(item.label.indexOf(name) !== -1) {
+            if (item.label.includes(name))
                 result.push(item)
-            } else if (item.children && item.children.length) {
+
+            else if (item.children && item.children.length)
                 getTargetList(item.children, name)
-            }
         })
     }
     getTargetList(list, name)
@@ -303,8 +309,9 @@ export const getTreeNode = (list: Array<Record<string, any>>, code: string | num
  * @param {*} vm 变量对象
  * @param {*} expr 变量在对象内的位置  如server.base
  */
- export const getVal = (vm: any, expr: string) => {
-    if (!expr) return vm
+export const getVal = (vm: any, expr: string) => {
+    if (!expr)
+        return vm
     const value = expr.split('.').reduce((data: any, current: any) => {
         return data[current]
     }, vm)
@@ -312,13 +319,27 @@ export const getTreeNode = (list: Array<Record<string, any>>, code: string | num
 }
 
 /**
+ * @dec 赋值对象
+ * @param {*} obj 变量对象
+ * @param {*} key 变量在对象内的位置  如server.base
+ * @param {*} val 变量的值
+ */
+export const getDeepObj = (obj: Record<string, any>, key: string, val: string | number) => {
+    const keyArr = key.split('.')
+    keyArr.reduce((data: any, current: any, arr) => {
+        if (arr === keyArr.length - 1)
+            data[current] = val
+        return data[current]
+    }, obj)
+}
+/**
  * @name 模板解析
  * @dec 处理{{}}字符串，替换变量值
  * @param {*} vm 变量对象
  * @param {*} expr 字符串内部包含{{变量}}  如http://{{server.base}}/{{path}}
  */
- export const getContentValue = (vm: any, expr: string) => {
-    //expr: 我是{{person.name}}
+export const getContentValue = (vm: any, expr: string) => {
+    // expr: 我是{{person.name}}
     // 遍历表达式将内容重新特换成一个完整的内容，返回回去
     return expr.replace(/\{\{(.+?)\}\}/g, (...args) => {
         return getVal(vm, args[1])

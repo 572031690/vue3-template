@@ -1,10 +1,10 @@
 <template lang="pug">
 el-button( @click="setCurrent(1)") 单选选中第二行
-el-button(  @click="setCurrent()" ) 清除单选 
+el-button(  @click="setCurrent()" ) 清除单选
 el-button( @click="toggleSelection([1, 2])") 复选选中第二三行
-el-button(  @click="toggleSelection()" ) 清除复选 
-el-button(  @click="toggleSelection('all')" ) 复选全选或全不选 
-fpi-el-table(
+el-button(  @click="toggleSelection()" ) 清除复选
+el-button(  @click="toggleSelection('all')" ) 复选全选或全不选
+FpiElTableVue(
     :column="column"
     border
     :ref="el => data.fpiElTableDom = el"
@@ -16,29 +16,28 @@ fpi-el-table(
     @current-change="handleCurrentChange"
     @selection-change="handleSelectionChange"
     )
-
 </template>
 
 <script lang="ts" setup name="FpiTable15">
-import { globalKey, serviceKey, defaultService } from '@/symbols'
-const $global = inject(globalKey)
-const $service = inject(serviceKey, defaultService)
+import type { tableColumnTs } from '../types'
+import FpiElTableVue from '../FpiElTable.vue'
+import * as request from '@/service/apis/public'
 
 interface columDataTs {
     [key: string]: any
-    companyCode: null,
-    companyName: string,
-    disposalUnitCode: null,
-    disposalUnitName: null,
-    generatingUnitCode: null,
-    generatingUnitName: null,
-    jointNumber: string,
-    jointSerialNumber: string,
-    licenseNumber: string,
-    num: string,
-    receivedQuantity: string,
-    transferDate: string,
-    wasteName: string,
+    companyCode: null
+    companyName: string
+    disposalUnitCode: null
+    disposalUnitName: null
+    generatingUnitCode: null
+    generatingUnitName: null
+    jointNumber: string
+    jointSerialNumber: string
+    licenseNumber: string
+    num: string
+    receivedQuantity: string
+    transferDate: string
+    wasteName: string
 }
 // 过滤数据
 const data = reactive({
@@ -78,14 +77,14 @@ const data = reactive({
             label: 'receivedQuantity数量',
         },
 
-    ],
+    ] as tableColumnTs[],
     fpiElTableDom: ref(),
     pageParams: {
-        currentPage:1,
+        currentPage: 1,
         total: 0,
         pageSizes: 10,
     },
-    list:[]
+    list: []
 })
 onMounted(() => {
     getData()
@@ -104,15 +103,16 @@ const getData = () => {
         offset: data.pageParams.currentPage - 1,
         limit: data.pageParams.pageSizes,
     }
-    $service('publicMap/realTimeViewLoad', params, {}, 'intercept').then((res: any) => {
+    request.realTimeViewLoad(params, {
+        isIntercept: true
+    }).then((res: any) => {
         data.pageParams.total = Number(res.total) ?? 0
         data.list = res.rows || []
         data.fpiElTableDom.changeLoading(false)
     })
-
 }
 const pageChange = (pageObj: {
-    currentPage:number
+    currentPage: number
     total: number
     pageSizes: number
 }) => {
@@ -123,21 +123,21 @@ const pageChange = (pageObj: {
 
 // 单选设置点击选中
 // 静态数据模式时只支持number
-const setCurrent = (row?: columDataTs|number) => {
-  data.fpiElTableDom && data.fpiElTableDom.setCurrentRow(row)
+const setCurrent = (row?: columDataTs | number) => {
+    data.fpiElTableDom && data.fpiElTableDom.setCurrentRow(row)
 }
 
 /**
  * @desc 复选框手动调用方法
- * @param rows  undefined 清除选中  'all' 全选获不全选会自动取反 
+ * @param rows  undefined 清除选中  'all' 全选获不全选会自动取反
  * rows传数组 可以是对应的对象（静态模式不可用对象）也可以是对应的index(0开始)选中对应列
  */
 const toggleSelection = (rows?: any[] | 'all') => {
-  data.fpiElTableDom && data.fpiElTableDom.toggleSelection(rows)
+    data.fpiElTableDom && data.fpiElTableDom.toggleSelection(rows)
 }
 // 单选点击回调
 const handleCurrentChange = (val: any | undefined, old: any) => {
-    console.log('此次单选选中：',val,'上次单选选中：', old, '单选')
+    console.log('此次单选选中：', val, '上次单选选中：', old, '单选')
 }
 // 多选点击回调
 const handleSelectionChange = (val: any[]) => {

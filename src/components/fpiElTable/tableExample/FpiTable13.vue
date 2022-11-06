@@ -1,8 +1,15 @@
+<!--
+ * @Author: mjh
+ * @Date: 2022-08-19 09:31:37
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-11-06 10:56:28
+ * @Description:
+-->
 <template lang="pug">
-h1 返回等级大于2的数据
-fpi-el-table(
+h1 返回等级大于等于2的数据
+FpiElTableVue(
     :column="column"
-    api="publicMap/realTimeViewLoad"
+    :api="request.realTimeViewLoad"
     resExpr="rows"
     pageTotalExpr="total"
     :currentPageOffset="-1"
@@ -12,10 +19,12 @@ fpi-el-table(
     :filterMethod="fiterMethod"
     max-height="400"
     )
-
 </template>
 
 <script lang="ts" setup name="FpiTable11">
+import type { tableColumnTs } from '../types'
+import FpiElTableVue from '../FpiElTable.vue'
+import * as request from '@/service/apis/public'
 // 过滤数据
 const data = reactive({
     column: [
@@ -48,7 +57,7 @@ const data = reactive({
             label: 'receivedQuantity数量',
         },
 
-    ],
+    ] as tableColumnTs[],
     params: {
         stationCodes: 1,
         regionCodes: '330100000000',
@@ -60,7 +69,7 @@ const data = reactive({
     },
 })
 // 过滤数据
-const fiterMethod = (row:any, index:number, arr: Array<any>) => {
+const fiterMethod = (row: any, index: number, arr: Array<any>) => {
     return row.grade >= 2
 }
 const { column, params } = toRefs(data)

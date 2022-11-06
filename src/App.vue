@@ -1,24 +1,25 @@
 <!--
  * @Author: Tian
  * @Date: 2022-05-08 18:13:26
- * @LastEditors: Tian
- * @LastEditTime: 2022-06-22 14:17:43
- * @Description: 
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-10-21 23:57:32
+ * @Description:
 -->
 
-<template lang="pug">
-el-config-provider(:locale="locale")
-    #mainApp
-        router-view
+<template>
+    <ElConfigProvider :locale="locale">
+        <div id="mainApp">
+            <router-view />
+        </div>
+    </ElConfigProvider>
 </template>
+
 <script setup lang="ts">
-import dayjs from "dayjs"
+import dayjs from 'dayjs'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import { ElConfigProvider } from 'element-plus'
-import service from '@/service/api'
-import { globalKey, serviceKey } from '@/symbols'
+import { globalKey } from '@/symbols'
 const locale = zhCn
-provide(serviceKey, service)
 provide(globalKey, {
     dayjs
 })
@@ -26,9 +27,17 @@ provide(globalKey, {
 
 <style lang="scss">
 @import url("./styles/base.scss");
+
 #mainApp {
     width: 100%;
     height: 100%;
 }
-    
+
+.el-input__wrapper {
+    width: 100%;
+}
+
+.el-date-editor {
+    width: 100%;
+}
 </style>

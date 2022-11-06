@@ -1,5 +1,4 @@
 <template lang="pug">
-
 .form-box
     div
         el-radio-group(v-model="labelPosition" label="label position")
@@ -18,7 +17,7 @@
             el-radio-button(label="default") default
             el-radio-button(label="small") small
     br
-    FpiForm( 
+    FpiForm(
         :formOption="formOption"
         v-model="formData"
         :inline="inline"
@@ -29,6 +28,7 @@
 
 <script lang="ts" setup name="FpiForm">
 import { reactive } from 'vue'
+import type { formItemTs } from '../type'
 
 const data = reactive({
     formOption: [
@@ -61,8 +61,8 @@ const data = reactive({
             inputProps: {
                 showPassword: true,
                 type: 'password',
-            clearable: true,
-            placeholder: '测试',
+                clearable: true,
+                placeholder: '测试',
             },
             key: 'inputPass',
             rules: 'unNull'
@@ -73,7 +73,7 @@ const data = reactive({
             key: 'selId',
             inputProps: {
                 clearable: true,
-                
+
             },
             defaultSelect: 0,
             option: [
@@ -91,7 +91,7 @@ const data = reactive({
                 type: 'textarea'
             }
         }
-    ],
+    ] as formItemTs[],
     formData: {
         input1: '',
         inputNum: '',
@@ -99,18 +99,19 @@ const data = reactive({
         selId: '',
         textarea1: '',
     },
-    labelPosition: 'left',
+    labelPosition: 'left' as const,
     inline: false,
-    size: 'default'
+    size: 'default' as const
 
 })
 onMounted(() => {
     setTimeout(() => {
-        data.formData.inputNum = '21546545646'
-    },2000)
+        //
+    }, 2000)
 })
 const { formOption, formData, labelPosition, inline, size } = toRefs(data)
 </script>
+
 <style lang="scss" scoped>
 .form-box {
     width: 50%;

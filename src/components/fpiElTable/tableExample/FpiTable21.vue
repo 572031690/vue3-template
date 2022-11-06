@@ -1,5 +1,5 @@
 <template lang="pug">
-fpi-el-table(
+FpiElTableVue(
     :column="column"
     border
     :ref="el => data.fpiElTableDom = el"
@@ -12,12 +12,12 @@ fpi-el-table(
     element-loading-svg-view-box="-10, -10, 50, 50"
     element-loading-background="rgba(122, 122, 122, 0.8)"
     )
-
 </template>
 
 <script lang="ts" setup name="FpiTable11">
-import { serviceKey, defaultService } from '@/symbols'
-const $service = inject(serviceKey, defaultService)
+import type { tableColumnTs } from '../types'
+import FpiElTableVue from '../FpiElTable.vue'
+import * as request from '@/service/apis/public'
 const svg = `
         <path class="path" d="
           M 30 15
@@ -59,14 +59,14 @@ const data = reactive({
             label: 'receivedQuantity数量',
         },
 
-    ],
+    ] as tableColumnTs[],
     fpiElTableDom: ref(),
     pageParams: {
-        currentPage:1,
+        currentPage: 1,
         total: 0,
         pageSizes: 10,
     },
-    list:[]
+    list: []
 })
 onMounted(() => {
     getData()
@@ -86,16 +86,15 @@ const getData = () => {
         limit: data.pageParams.pageSizes,
         offset: data.pageParams.currentPage - 1
     }
-    $service('publicMap/realTimeViewLoad', params, {}, 'intercept').then((res: any) => {
+    request.realTimeViewLoad(params, { isIntercept: true }).then((res: any) => {
         data.pageParams.total = Number(res.total) ?? 0
         data.list = res.rows || []
         // data.fpiElTableDom.changeLoading(false)
     })
-
 }
 // 必须按照这三个变量名写
 const pageChange = (pageObj: {
-    currentPage:number
+    currentPage: number
     total: number
     pageSizes: number
 }) => {

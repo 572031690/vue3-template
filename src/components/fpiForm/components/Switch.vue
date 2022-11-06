@@ -1,20 +1,30 @@
 <template lang="pug">
 el-switch(
         v-if="type === 'switch'"
+        :size="inputProps.size"
+        :style="inputProps.style"
+        :disabled="inputProps.disabled"
+        :active-text="inputProps.activeText"
+        :inactive-text="inputProps.inactiveText"
+        :inline-prompt="inputProps.inlinePrompt"
+        :active-icon="inputProps.activeIcon"
+        :inactive-icon="inputProps.inactiveIcon"
+        :active-value="inputProps.activeValue"
+        :inactive-value="inputProps.inactiveValue"
+        @change="inputProps.change"
         v-model="currModelValue")
-       
 </template>
 
 <script lang="ts" setup>
-import type { inputPropsTs, fromTypeTs, optionTs } from '../type'
 import type { PropType, WritableComputedRef } from 'vue'
 import type { EpPropMergeType } from 'element-plus/es/utils'
+import type { fromTypeTs, inputPropsTs, optionTs } from '../type'
 const props = defineProps({
     /**
      * @desc 表单配置项
-     * @abstract 
+     * @abstract
      */
-    formItem: {
+    inputProps: {
         type: Object as PropType<inputPropsTs>,
         default: () => {
             return {}
@@ -52,7 +62,7 @@ const $emit = defineEmits([
 ])
 const currModelValue: WritableComputedRef<EpPropMergeType<readonly [BooleanConstructor, StringConstructor, NumberConstructor], unknown, unknown> | undefined> = computed({
     set(value) {
-        console.log(value,'value')
+        console.log(value, 'value')
         $emit('update:modelValue', value)
     },
     get() {

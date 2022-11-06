@@ -23,6 +23,17 @@
             "@static/": ["./public/static/"]
         }
     },
-    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+    "vueCompilerOptions": {
+        "plugins": [
+          "@volar/vue-language-plugin-pug"
+        ]
+    },
+    "include": ["src/**/*.ts", "**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+    "exclude": [
+        "node_modules",
+        "dist", 
+        "public",
+        "src/assets",
+    ],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

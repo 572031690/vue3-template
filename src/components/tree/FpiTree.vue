@@ -2,7 +2,7 @@
 .fpi-tree
     .side-input(v-if='showSearchBox')
         el-input(
-            v-model="filterText" 
+            v-model="filterText"
             :placeholder="placeholder"
             :prefix-icon="Search"
         )
@@ -38,19 +38,19 @@
                 img(:src='scope.data.children ? folderIcon : expandIcon')
                 span {{scope.node.label}}
 </template>
+
 <script lang="ts" setup name="fpi-tree">
+import { Search } from '@element-plus/icons-vue'
+import type Node from 'element-plus/es/components/tree/src/model/node'
 import type { TreeNodeData } from './types'
 import { treeProps } from './props'
-import { Search } from '@element-plus/icons-vue'
-import { serviceKey, defaultService } from '@/symbols'
-import type Node from 'element-plus/es/components/tree/src/model/node'
+import * as request from '@/service/apis/public'
 import folderIcon1 from '@/assets/images/treeIcon/icon.svg'
 import folderIcon2 from '@/assets/images/treeIcon/file.svg'
-const service = inject(serviceKey, defaultService)
-
 defineProps({
     ...treeProps
 })
+
 const filterText = ref('')
 const treeRef = ref()
 
@@ -61,9 +61,9 @@ const allProps = reactive({
         children: 'children',
         label: 'label',
         class: (data: TreeNodeData) => {
-            if(data.id === 659053) {
+            if (data.id === 659053)
                 return 'is-penultimate'
-            }
+
             return null
         }
     },
@@ -83,40 +83,42 @@ const allProps = reactive({
         console.log(node)
         return true
     }
-}) 
+})
 
 watch(filterText, (val) => {
     treeRef.value?.filter(val) ?? false
 })
 
 const filterNodeMethod = (value: string, data: TreeNodeData) => {
-    if (!value) return true
+    if (!value)
+        return true
     return data.label.includes(value)
 }
 
-
-const getTreeData = async() => {
-    const data = await service('publicMap/getTreeData', {
+const getTreeData = async () => {
+    const data = await request.getTreeData({
         code: '330100000000'
     })
-    allProps.resultData = data
-    console.log(data)
+    allProps.resultData = data as any
 }
 getTreeData()
 
 const { nodeKey1, defaultProps, resultData, folderIcon, expandIcon, highlightCurrent, defaultExpandAll, expandOnClickNode, checkOnClickNode, draggable, defaultExpandedKeys, currentNodeKey, showCheckbox, defaultCheckedKeys, arrowDrag } = toRefs(allProps)
-
 </script>
+
 <style lang="scss" scoped>
 .fpi-tree {
     padding: $padding;
+
     .side-input {
         margin-bottom: $margin;
     }
 }
+
 .custom-node {
     display: flex;
     align-items: center;
+
     img {
         width: 16px;
         height: 16px;
@@ -124,11 +126,11 @@ const { nodeKey1, defaultProps, resultData, folderIcon, expandIcon, highlightCur
     }
 }
 </style>
+
 <style lang="scss">
 .is-penultimate {
     .el-tree-node__content {
-        color: #626aef!important;
+        color: #626aef !important;
     }
-  
 }
 </style>

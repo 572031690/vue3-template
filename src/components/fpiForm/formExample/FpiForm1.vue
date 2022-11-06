@@ -1,16 +1,16 @@
 <template lang="pug">
 .form-box
-    FpiForm( 
+    FpiForm(
         :formOption="formOption"
         v-model="formData"
         )
         template( v-slot:slot1="{ formItem }" )
-            el-input(v-model="formData.slot1") 
-                
+            el-input(v-model="formData.slot1")
 </template>
 
 <script lang="ts" setup name="FpiForm">
 import { reactive } from 'vue'
+import type { formItemTs } from '@/components/fpiForm/type'
 
 const data = reactive({
     formOption: [
@@ -20,7 +20,7 @@ const data = reactive({
             size: 'small',
             key: 'input1',
             rules: 'unNull',
-            value: '15',
+            value: '88',
             inputProps: {
                 placeholder: '测试',
                 disabled: true,
@@ -34,6 +34,7 @@ const data = reactive({
             rules: 'unNull,number',
             inputProps: {
                 clearable: true,
+                isFocus: true,
                 placeholder: '测试',
             }
 
@@ -41,10 +42,11 @@ const data = reactive({
         {
             label: '密码输入框',
             type: 'input',
-            showPassword: true,
             key: 'inputPass',
             rules: 'unNull',
+            value: '5456415646768',
             inputProps: {
+                showPassword: true,
                 type: 'password',
                 clearable: true,
                 placeholder: '测试',
@@ -56,11 +58,6 @@ const data = reactive({
             key: 'slot1',
             slot: true,
             rules: 'unNull',
-            inputProps: {
-                clearable: true,
-                placeholder: '测试',
-            }
-
         },
         {
             label: 'select输入',
@@ -87,9 +84,6 @@ const data = reactive({
                     inputProps: {
                         type: 'date',
                         placeholder: 'Pick a date',
-                        style: {
-                            width: '100%'
-                        }
                     }
 
                 },
@@ -97,7 +91,7 @@ const data = reactive({
                     type: 'dom',
                     span: 2,
                     vHtml: () => {
-                        return '<div style="color: #6b7280;">-</div>'
+                        return '<div style="color: #6b7280;text-align:center;">-</div>'
                     }
                 },
                 {
@@ -147,7 +141,7 @@ const data = reactive({
             }
 
         }
-    ],
+    ] as formItemTs[],
     formData: {
         input1: '',
         inputNum: '',
@@ -170,6 +164,7 @@ onMounted(() => {
 })
 const { formOption, formData } = toRefs(data)
 </script>
+
 <style lang="scss" scoped>
 .form-box {
     width: 50%;

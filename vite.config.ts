@@ -10,7 +10,8 @@ import visualizer from 'rollup-plugin-visualizer'
 
 const { name }: Record<string, any> = require('./package.json')
 const isProduction = process.env.NODE_ENV === 'production'
-const ONLINENAME = 'http://wgms-test.fpi-inc.site'
+const ONLINENAMETEST = 'https://wgms-test.fpi-inc.site'
+const ONLINENAMEDEV = 'http://wgms.dev.fpi-inc.site'
 export default defineConfig({
     plugins: [
         vue(),
@@ -25,8 +26,8 @@ export default defineConfig({
                 ElementPlusResolver(),
                 // 自动导入图标组件
                 IconsResolver({
-                    prefix: 'Icon',
-                }),
+                    prefix: 'Icon'
+                })
             ],
             imports: ['vue', 'vue-router', 'pinia'],
             eslintrc: {
@@ -41,13 +42,13 @@ export default defineConfig({
             resolvers: [
                 // 自动注册图标组件
                 IconsResolver({
-                    enabledCollections: ['ep'],
+                    enabledCollections: ['ep']
                 }),
                 ElementPlusResolver()
             ]
         }),
         Icons({
-            autoInstall: true,
+            autoInstall: true
         }),
         // viteCompression({
         //     //gzip压缩
@@ -111,8 +112,13 @@ export default defineConfig({
         open: true,
         proxy: {
             '/api': {
-                target: ONLINENAME,
+                target: ONLINENAMEDEV,
                 rewrite: path => path.replace(/^\/api/, ''),
+                changeOrigin: true
+            },
+            '/dev': {
+                target: ONLINENAMEDEV,
+                rewrite: path => path.replace(/^\/dev/, ''),
                 changeOrigin: true
             }
         }

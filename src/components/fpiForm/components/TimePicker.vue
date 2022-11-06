@@ -1,23 +1,28 @@
 <template lang="pug">
 el-time-picker(
-        :clearable="formItem.clearable"
-        :disabled="formItem.disabled"
+        :clearable="inputProps.clearable"
+        :size="inputProps.size"
+        :disabled="inputProps.disabled"
         v-model="currModelValue"
-        :placeholder="formItem.placeholder"
-        :style="!formItem.style ? formItem.style: {...formItem.style, width: '100%'}")
-       
+        :placeholder="inputProps.placeholder"
+        :range-separator="inputProps.rangeSeparator"
+        :is-range="inputProps.isRange"
+        :start-placeholder="inputProps.startPlaceholder"
+        :end-placeholder="inputProps.endPlaceholder"
+        @change="inputProps.change"
+        :style="!inputProps.style ? inputProps.style: {...inputProps.style, width: '100%'}")
 </template>
 
 <script lang="ts" setup>
-import type { inputPropsTs, fromTypeTs, optionTs } from '../type'
 import type { PropType } from 'vue'
 import type { EpPropMergeType } from 'element-plus/es/utils'
+import type { fromTypeTs, inputPropsTs, optionTs } from '../type'
 const props = defineProps({
     /**
      * @desc 表单配置项
-     * @abstract 
+     * @abstract
      */
-    formItem: {
+    inputProps: {
         type: Object as PropType<inputPropsTs>,
         default: () => {
             return {}
@@ -27,7 +32,7 @@ const props = defineProps({
      * @desc 对应vModel值
      */
     modelValue: {
-        type: [Number, String] as PropType<EpPropMergeType<readonly [BooleanConstructor, StringConstructor, NumberConstructor], unknown, unknown> | undefined>,
+        type: [Number, String, Date] as PropType<EpPropMergeType<readonly [BooleanConstructor, StringConstructor, NumberConstructor], unknown, unknown> | undefined>,
         default: ''
     },
     /**

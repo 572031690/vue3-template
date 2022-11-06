@@ -1,8 +1,15 @@
+<!--
+ * @Author: mjh
+ * @Date: 2022-08-19 09:31:37
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-11-05 21:18:55
+ * @Description:
+-->
 <template lang="pug">
-fpi-el-table(
+FpiElTableVue(
     :column="column"
     :ref="el => data.fpiElTableDom = el"
-    api="publicMap/realTimeViewLoad"
+    :api="request.realTimeViewLoad"
     resExpr="rows"
     pageTotalExpr="total"
     :currentPageOffset="-1"
@@ -11,10 +18,12 @@ fpi-el-table(
     :params="params"
     max-height="450"
     )
-
 </template>
 
 <script lang="ts" setup name="FpiTable4">
+import FpiElTableVue from '../FpiElTable.vue'
+import type { tableColumnTs } from '../types'
+import * as request from '@/service/apis/public'
 // resExpr对应接口请求返回对应的表格数据的对象内的位置
 // 如： res:{     那么位置就是data
 //     data: []
@@ -29,7 +38,7 @@ const pageInit = {
     pageSizes: 15,
     currentPage: 1,
     total: 0,
-    pageSizesArr:[10, 15, 30, 50]
+    pageSizesArr: [10, 15, 30, 50]
 }
 const data = reactive({
     column: [
@@ -62,7 +71,7 @@ const data = reactive({
             label: 'receivedQuantity数量',
         },
 
-    ],
+    ] as tableColumnTs[],
     fpiElTableDom: ref(),
     params: {
         stationCodes: 1,

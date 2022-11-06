@@ -1,8 +1,15 @@
+<!--
+ * @Author: mjh
+ * @Date: 2022-08-19 09:31:37
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-10-22 08:09:44
+ * @Description:
+-->
 <template lang="pug">
 el-button(@click="getTableLoad()")  请求表格
-fpi-el-table(
+FpiElTableVue(
     :column="column"
-    api="publicMap/realTimeViewLoad"
+    :api="request.realTimeViewLoad"
     :ref="el => data.fpiElTableDom = el"
     resExpr="rows"
     pageTotalExpr="total"
@@ -11,12 +18,13 @@ fpi-el-table(
     :isLazyRequest="true"
     :params="params"
     )
-
 </template>
 
 <script lang="ts" setup name="FpiTable4">
+import type { tableColumnTs } from '../types'
+import FpiElTableVue from '../FpiElTable.vue'
+import * as request from '@/service/apis/public'
 // isLazyRequest设置为true就可以实现默认不请求
-
 
 const data = reactive({
     column: [
@@ -49,7 +57,7 @@ const data = reactive({
             label: 'receivedQuantity数量',
         },
 
-    ],
+    ] as tableColumnTs[],
     fpiElTableDom: ref(),
     params: {
         stationCodes: 1,
@@ -63,7 +71,7 @@ const data = reactive({
 })
 // 手动请求
 const getTableLoad = () => {
-    data.fpiElTableDom.reLoadTable() 
+    data.fpiElTableDom.reLoadTable()
 }
 const { column, params } = toRefs(data)
 </script>

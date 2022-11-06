@@ -1,81 +1,47 @@
-import { tableColumnTs } from './types'
-/**
- * @desc 获取column配置内是否有自定义header插槽
- * @param column 表格对象
- * @abstract 递归获取
- * @returns header插槽名称数组
+/*
+ * @Author: mjh
+ * @Date: 2022-11-06 09:06:18
+ * @LastEditors: mjh
+ * @LastEditTime: 2022-11-06 18:42:33
+ * @Description:
  */
-export const getTotalSoltHeader = (column: tableColumnTs) => {
-    const totalSoltName: string[] = []
-    const getDeepSolt = (columnObj: tableColumnTs) => {
-        if (columnObj.isSlotHeader)
-            totalSoltName.push(columnObj.prop + '-Header')
-        columnObj.column &&
-            columnObj.column.length &&
-            columnObj.column.forEach((item: tableColumnTs) => {
-                getDeepSolt(item)
-            })
-    }
-    getDeepSolt(column)
-    return totalSoltName
+
+/**
+ * @dec 替换{{}}变量
+ * @param {*} vm 变量对象
+ * @param {*} expr 变量在对象内的位置  如server.base
+ */
+export const getVal = (vm: any, expr: string) => {
+    if (!expr)
+        return vm
+    const value = expr.split('.').reduce((data: any, current: any) => {
+        return data[current]
+    }, vm)
+    return value
 }
 /**
- * @desc 获取column配置内是否有自定义expand展开行
- * @param column 表格对象
- * @abstract 递归获取
- * @returns boolean 是否含有expand展开行
+ * 获取类型方法 返回 参数类型 或者 true/false
+ * @param {*} tgt 需要判断类型的变量
+ * @param {*} type? 可传可不传， 不传的话方法返回变量类型，传的话返回参数类型是否一致true/false
+ * 可确定的类型：undefined、null、string、number、boolean、array、object、symbol、
+ * date、regexp、function、asyncfunction、arguments、set、map、weakset、weakmap
  */
-export const isHaveExpand = (column: tableColumnTs) => {
-    let isHave = false
-    const getDeepSolt = (columnObj: tableColumnTs) => {
-        if (columnObj.type === 'expand') isHave = true
-        !isHave &&
-            columnObj.column &&
-            columnObj.column.length &&
-            columnObj.column.forEach((item: tableColumnTs) => {
-                getDeepSolt(item)
-            })
-    }
-    getDeepSolt(column)
-    return isHave
+export function DataType(tgt: any): string
+export function DataType(tgt: any, type: string): boolean
+export function DataType(tgt: any, type?: string) {
+    const dataType = Object.prototype.toString
+        .call(tgt)
+        .replace(/\[object (\w+)\]/, '$1')
+        .toLowerCase()
+    return (type ? dataType === type : dataType)
 }
-/**
- * @desc 获取column配置内是否有自定义表格插槽
- * @param column 表格对象
- * @abstract 递归获取
- * @returns 插槽prop 名称数组
- */
-export const getTotalSolt = (column: tableColumnTs) => {
-    const totalSoltName: string[] = []
-    const getDeepSolt = (columnObj: tableColumnTs) => {
-        if (columnObj.isSlot && columnObj.prop)
-            totalSoltName.push(columnObj.prop)
-        columnObj.column &&
-            columnObj.column.length &&
-            columnObj.column.forEach((item: tableColumnTs) => {
-                getDeepSolt(item)
-            })
-    }
-    getDeepSolt(column)
-    return totalSoltName
+export function pickKey<T extends Record<string, any>, K extends keyof T>(obj: T, keyArr: K[]) {
+    return keyArr.reduce((pre: record, cur: K) => {
+        (pre as T)[cur] = obj[cur]
+        return pre
+    }, {})
 }
-/**
- * @desc 当label内有$br字样的时候会自动换行
- * @param columns element表格对象
- * @param index 索引
- * @returns 换行后的表头dom
- */
-export const renderHeaderDefault = (columns: {
-    column: record
-    index: number
-}) => {
-    const label = columns.column.label
-    if (!label) return
-    const labelArr = label.split('$br')
-    if (labelArr.length === 1) return label
-    return h(
-        'div',
-        {},
-        labelArr.map((item: string) => h('div', {}, item))
-    )
+
+export function getObjectKey<T extends Record<string, any>>(obj: T) {
+    return Object.keys(obj) as (keyof T)[]
 }
