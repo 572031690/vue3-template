@@ -1,17 +1,94 @@
 <template>
-    <TableNode />
+    <div class="table-box">
+        <ElTable
+            ref="singleTableRef"
+            v-loading="loading"
+            :element-loading-text="elementLoadingText"
+            :element-loading-background="elementLoadingBackground"
+            :element-loading-svg-view-box="elementLoadingSvgViewBox"
+            :element-loading-svg="elementLoadingSvg"
+            :data="currTableData"
+            style="width: 100%;"
+            :default-sort="defaultSort"
+            :height="height"
+            :max-height="maxHeight"
+            :stripe="stripe"
+            :lazy="lazy"
+            :load="load"
+            :size="size"
+            :fit="fit"
+            :show-header="showHeader"
+            :tree-props="treeProps"
+            :border="border"
+            :row-key="rowKey"
+            :sum-text="sumText"
+            :default-expand-all="defaultExpandAll"
+            :expand-row-keys="expandRowKeys"
+            :table-layout="tableLayout"
+            :show-summary="showSummary"
+            :highlight-current-row="highlightCurrentRow"
+            :row-class-name="rowClassName" :row-style="rowStyle"
+            :cell-style="cellStyle"
+            :header-row-class-name="headerRowClassName"
+            :header-row-style="headerRowStyle"
+            :header-cell-class-name="headerCellClassName"
+            :cell-class-name="cellClassName"
+            :header-cell-style="headerCellStyle"
+            :empty-text="emptyText"
+            :scrollbar-always-on="scrollbarAlwaysOn"
+            :tooltip-effect="tooltipEffect"
+            :summary-method="summaryMethod"
+            :span-method="spanMethod"
+            :indent="indent"
+            :flexible="flexible"
+            :select-on-indeterminate="selectOnindeterminate"
+            @current-change="handleCurrentChange"
+            @select-all="handleSelectAll"
+            @expand-change="handleExpandChange"
+            @sort-change="sortChange"
+            @selection-change="selectionChange"
+            @row-click="rowClick"
+        >
+            <template #empty>
+                <slot name="empty" />
+            </template>
+            <template #append>
+                <slot name="append" />
+            </template>
+            <ElTableNode
+                v-for="(item, index) of column"
+                :key="index"
+                :column-data="item"
+                :slots="slots"
+            />
+        </ElTable>
+        <div v-if="isShowPage" class="list-page" :style="pageBoxStyle">
+            <div style="width: fit-content;">
+                <ElPagination
+                    v-model:page-size="pageParameter.pageSizes"
+                    :layout="pageLayout"
+                    popper-class="transformPage"
+                    :background="isShowPageback"
+                    :page-sizes="pageInit.pageSizesArr || [10, 20, 30, 50]"
+                    :total="pageParameter.total"
+                    :pager-count="pagerCount"
+                    :small="small" :current-page="pageParameter.currentPage"
+                    @current-change="currentChange"
+                    @size-change="currentSizeChange"
+                />
+            </div>
+        </div>
+    </div>
 </template>
 
 <script lang="ts" setup name="FpiElTableVue">
 import { cloneDeep } from 'lodash-es'
-import { ElPagination, ElTable, vLoading } from 'element-plus'
-import { withDirectives } from 'vue'
+import { ElTable } from 'element-plus'
 import { exposeHook } from './hook/expose'
-import TableColumnNode from './TableColumnNode.vue'
 import { elementProps, fpiTableProps, loadingProps, pageProps } from './props'
 import type { PageKeyTs, dataTs } from './types'
-import { emitList, emitPageList } from './hook/emit'
-import { DataType, getObjectKey, getVal, pickKey } from './utils'
+import { emitHook, emitList, emitPageList } from './hook/emit'
+import { DataType, getVal } from '@/utils/tools'
 const props = defineProps({
     // ******** fpitable特殊属性 ***********
     ...fpiTableProps,
@@ -30,6 +107,7 @@ const $emit = defineEmits([
     ...emitPageList
 ])
 const slots = useSlots()
+
 const data: dataTs = reactive({
     currTableData: [], // 当前表格数据
     pageParameter: {
@@ -38,94 +116,6 @@ const data: dataTs = reactive({
         total: 0 // 总共多少条数据
     },
     loading: false, // 是否显示loading加载图标
-})
-const TableNode = defineComponent({
-    render() {
-        // const loading = resolveDirective('vLoading') // 获取自定义指令
-        return h(
-            'div',
-            {
-                class: 'fpi-table-box'
-            },
-            [
-                withDirectives(h(
-                    ElTable,
-                    {
-                        ...pickKey(props, getObjectKey(elementProps)),
-                        ref: singleTableRef,
-                        data: data.currTableData,
-                        style: {
-                            width: '100%'
-                        },
-                        ...emitList.reduce((pre: Record<string, any>, cur) => {
-                            pre[`on${cur}`] = (...arg: any[]) => {
-                                $emit(cur, ...arg)
-                            }
-                            return pre
-                        }, {}),
-                    },
-                    {
-                        empty() {
-                            return slots.empty && slots.empty()
-                        },
-                        append() {
-                            return slots.append && slots.append()
-                        },
-                        default() {
-                            return props.column.map((item, index) => {
-                                return h(
-                                    TableColumnNode,
-                                    {
-                                        key: index,
-                                        columnData: item,
-                                        slots
-                                    }
-                                )
-                            })
-                        }
-                    }
-                ), [[vLoading, data.loading]]),
-                props.isShowPage
-                    ? h(
-                        'div',
-                        {
-                            class: 'fpi-list-page',
-                            style: {
-                                'display': 'flex',
-                                'flex-direction': 'row-reverse',
-                                'padding-right': '15px',
-                                'margin-top': '15px',
-                                ...(props.pageBoxStyle || {})
-                            }
-                        },
-                        [
-                            h(
-                                'div',
-                                [
-                                    h(
-                                        ElPagination,
-                                        {
-                                            'pageSize': data.pageParameter.pageSizes,
-                                            ...pickKey(props, ['small', 'pagerCount']),
-                                            'layout': props.pageLayout,
-                                            'popper-class': 'transformPage',
-                                            'background': props.isShowPageback,
-                                            'page-sizes': props.pageInit.pageSizesArr || [10, 20, 30, 50],
-                                            'total': data.pageParameter.total,
-                                            'current-page': data.pageParameter.currentPage,
-                                            'onUpdate:pageSize': (value: number) => data.pageParameter.pageSizes = value,
-                                            'onCurrentChange': currentChange,
-                                            'onSizeChange': currentSizeChange
-                                        }
-                                    )
-                                ]
-                            )
-                        ]
-                    )
-                    : ''
-            ]
-        )
-    }
 })
 /**
  * @desc  table dom
@@ -203,7 +193,7 @@ const initTable = async () => {
     Object.keys(pageInit).forEach((item: string) => {
         (data as any)[item] = (pageInit as any)[item]
     })
-    // 判断是否转入api 且不是lazy模式
+    // 判断是否转入api 且部署lazy模式
     if (props.api && !props.isLazyRequest)
         data.currTableData = await filterData()
 
@@ -244,15 +234,25 @@ const sendRequest = async (currentPage: number, pageSizes: number, isUnLoading?:
             props.isShowPage && (data.pageParameter.total = props.pageTotalExpr ? Number(getVal(res, props.pageTotalExpr)) : 0)
             if (props.resPretreatment)
                 res = DataType(props.resPretreatment, 'asyncfunction') ? await props.resPretreatment(res) : props.resPretreatment(res)
+
             resolve(getVal(res, props.resExpr))
         })
     })
 }
+const {
+    handleCurrentChange,
+    handleSelectAll,
+    handleExpandChange,
+    selectionChange,
+    rowClick,
+    sortChange
+} = emitHook($emit)
 
 const exposeFun = exposeHook(data, props, singleTableRef, { sendRequest, filterData })
 
 initTable()
 
+const { loading, currTableData, pageParameter } = toRefs(data)
 defineExpose(exposeFun)
 </script>
 
@@ -266,11 +266,8 @@ defineExpose(exposeFun)
 </style>
 
 <style lang="scss">
-// @import url("element-plus/theme-chalk/el-table.css");
-// @import url("element-plus/theme-chalk/el-scrollbar.css");
-// @import url("element-plus/theme-chalk/el-pagination.css");
-// @import url("element-plus/theme-chalk/el-loading.css");
-
-@import url("element-plus/dist/index.css");
+@import url("element-plus/theme-chalk/el-table.css");
+@import url("element-plus/theme-chalk/el-scrollbar.css");
+@import url("element-plus/theme-chalk/el-pagination.css");
 </style>
 

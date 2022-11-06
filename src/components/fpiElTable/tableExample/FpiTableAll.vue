@@ -34,7 +34,6 @@
 <script lang="ts" setup name="FpiTableAll">
 import type { TableColumnCtx } from 'element-plus/es/components/table/src/table-column/defaults'
 import FpiElTableVue from '../FpiElTable.vue'
-import cccc from '../cccc.vue'
 import type { tableColumnTs } from '@/components/fpiElTable/types'
 import * as request from '@/service/apis/public'
 interface columDataTs {
@@ -54,7 +53,7 @@ interface columDataTs {
 }
 
 const fff = (val: any) => {
-    // console.log(val, 's')
+    console.log(val, 's')
     return 's'
 }
 const data = reactive({
@@ -166,27 +165,22 @@ const data = reactive({
         " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
     `,
 })
-const mgs = ref('message')
-const slots = useSlots()
-const comp = h(
-    cccc,
-    {
-        class: 'sss',
-        onchangeSS: (value: string) => {
-            console.log(value, '-mjhs')
-        },
-        mgs: mgs.value,
-    },
-    {
-        default(props: string) {
-            return `${props}mmsss`
-        }
-    }
-    // [
-    //     slots.default ? slots.default() : 'ss',
-    //     slots.value ? slots.value() : 'ss',
-    // ]
-)
+// const slots = useSlots()
+// const comp = h(
+//     cccc,
+//     {
+//         class: 'sss'
+//     },
+//     {
+//         default(props: string) {
+//             return `${props}mmsss`
+//         }
+//     }
+//     // [
+//     //     slots.default ? slots.default() : 'ss',
+//     //     slots.value ? slots.value() : 'ss',
+//     // ]
+// )
 
 const headStyleFun = () => {
     return {

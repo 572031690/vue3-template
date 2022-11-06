@@ -2,7 +2,7 @@
  * @Author: mjh
  * @Date: 2022-11-06 09:06:18
  * @LastEditors: mjh
- * @LastEditTime: 2022-11-06 18:42:33
+ * @LastEditTime: 2022-11-06 18:23:33
  * @Description:
  */
 
@@ -40,8 +40,4 @@ export function pickKey<T extends Record<string, any>, K extends keyof T>(obj: T
         (pre as T)[cur] = obj[cur]
         return pre
     }, {})
-}
-
-export function getObjectKey<T extends Record<string, any>>(obj: T) {
-    return Object.keys(obj) as (keyof T)[]
 }

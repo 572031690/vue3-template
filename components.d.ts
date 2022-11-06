@@ -8,7 +8,6 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     ButtonList: typeof import('./src/components/button/ButtonList.vue')['default']
-    Cccc: typeof import('./src/components/fpiElTable/cccc.vue')['default']
     Checkbox: typeof import('./src/components/fpiForm/components/Checkbox.vue')['default']
     copy: typeof import('./src/components/fpiForm/RemderTest copy.vue')['default']
     DatePicker: typeof import('./src/components/fpiForm/components/DatePicker.vue')['default']
@@ -41,7 +40,7 @@ declare module '@vue/runtime-core' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
-    ElTableNode: typeof import('./src/components/fpiElTable/TableColumnNode.vue')['default']
+    ElTableNode: typeof import('./src/components/fpiElTable/ElTableNode.vue')['default']
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     ElTree: typeof import('element-plus/es')['ElTree']
     FpiCascader: typeof import('./src/components/cascader/FpiCascader.vue')['default']
@@ -91,7 +90,6 @@ declare module '@vue/runtime-core' {
     SideLayout: typeof import('./src/components/common/SideLayout.vue')['default']
     SubMenu: typeof import('./src/components/menu/SubMenu.vue')['default']
     Switch: typeof import('./src/components/fpiForm/components/Switch.vue')['default']
-    TableColumnNode: typeof import('./src/components/fpiElTable/TableColumnNode.vue')['default']
     TimePicker: typeof import('./src/components/fpiForm/components/TimePicker.vue')['default']
   }
   export interface ComponentCustomProperties {

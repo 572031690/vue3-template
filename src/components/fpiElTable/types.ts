@@ -165,3 +165,4 @@ export interface dataTs {
 }
 
 export type PageKeyTs = keyof dataTs['pageParameter']
+

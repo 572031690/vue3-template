@@ -2,14 +2,14 @@
  * @Author: mjh
  * @Date: 2022-09-06 09:21:32
  * @LastEditors: mjh
- * @LastEditTime: 2022-11-06 18:46:26
+ * @LastEditTime: 2022-11-06 18:28:26
  * @Description:
 -->
 <template lang="pug">
 elTableNode
 </template>
 
-<script lang="ts" setup name="TableColumnNode">
+<script lang="ts" setup name="ElTableNode">
 import type { PropType } from 'vue'
 import { ElTableColumn } from 'element-plus'
 import { defineComponent, h } from 'vue'

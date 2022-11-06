@@ -44,7 +44,7 @@ const data = reactive({
         {
             type: 'index',
             label: '序号',
-            width: '80',
+            width: '50',
         },
         {
             prop: 'date',

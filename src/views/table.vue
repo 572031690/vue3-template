@@ -36,7 +36,7 @@ const data = reactive({
         { label: '14静态组件', value: 'FpiTable14' },
         { label: '15单选多选', value: 'FpiTable15' },
         { label: '16完整api请求', value: 'FpiTable16' },
-        { label: '17树形', value: 'FpiTable17' },
+        { label: '7树形', value: 'FpiTable17' },
         { label: '19配置工具', value: 'FpiTable19' },
         { label: '20动态列表', value: 'FpiTable20' },
         { label: '21loading', value: 'FpiTable21' },
