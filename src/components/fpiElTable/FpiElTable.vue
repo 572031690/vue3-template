@@ -181,7 +181,7 @@ const currentChange = (page: number) => {
  *   @param total 总共条数
  */
 const currentSizeChange = () => {
-    if (!props.api && data.pageParameter.total <= ((data.pageParameter.currentPage - 1) * data.pageParameter.pageSizes)) return
+    if (data.pageParameter.total <= ((data.pageParameter.currentPage - 1) * data.pageParameter.pageSizes)) return
     if (props.api) { exposeFun.reLoadTable() }
     else {
         $emit('page-change', {
